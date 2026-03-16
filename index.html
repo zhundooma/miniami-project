@@ -9,37 +9,50 @@
         @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;900&display=swap');
         body { font-family: 'Inter', sans-serif; background-color: #020617; color: #f8fafc; }
         .miniami-card { border: 1px solid transparent; background: linear-gradient(#020617, #020617) padding-box, linear-gradient(45deg, #3b82f6, #8b5cf6) border-box; }
-        .glow-blue { box-shadow: 0 0 60px rgba(59, 130, 246, 0.3); }
+        .glow { box-shadow: 0 0 50px rgba(59, 130, 246, 0.35); }
+        input::placeholder { color: #475569; }
     </style>
 </head>
 <body class="p-6 md:p-24 min-h-screen">
 
     <header class="max-w-4xl mx-auto text-center mb-16">
-        <h1 class="text-8xl font-black mb-4 tracking-tighter text-blue-500 italic text-center">MINIAMI</h1>
-        <p class="text-slate-500 text-[10px] tracking-[0.8em] uppercase font-black font-mono text-center">Taichung Nantun // V19.0 Stable Node</p>
+        <h1 class="text-8xl font-black mb-4 tracking-tighter text-blue-500 italic">MINIAMI</h1>
+        <p class="text-slate-500 text-[10px] tracking-[0.8em] uppercase font-black font-mono">Taichung Nantun // V21.0 Secure Node</p>
     </header>
 
     <main class="max-w-xl mx-auto">
-        <div class="miniami-card p-12 mb-12 rounded-[3.5rem] bg-slate-900/95 text-center glow-blue">
-            <h2 class="text-[11px] font-black text-slate-400 uppercase tracking-widest mb-10">AI 全球價格獲取終端</h2>
+        <div id="authArea" class="hidden mb-12 animate-in fade-in duration-700">
+            <div class="miniami-card p-10 rounded-[3rem] bg-slate-900/90 text-center">
+                <h2 class="text-[10px] font-black text-blue-400 uppercase tracking-widest mb-6">資產清算授權</h2>
+                <input type="password" id="keyInput" placeholder="請輸入 Gemini API 授權碼" 
+                       class="w-full p-5 bg-black border border-slate-800 rounded-2xl text-white font-mono text-sm mb-4 outline-none focus:border-blue-500">
+                <button onclick="saveAuthKey()" class="w-full bg-blue-600 text-white py-4 rounded-2xl font-black text-lg hover:bg-blue-500">啟動算力節點</button>
+            </div>
+        </div>
+
+        <div id="mainApp" class="miniami-card p-12 mb-12 rounded-[3.5rem] bg-slate-900/95 text-center glow">
+            <h2 class="text-[11px] font-black text-slate-400 uppercase tracking-widest mb-10">AI 全球價格清算中心</h2>
             <div class="space-y-6">
-                <input type="text" id="itemName" placeholder="例如: iPad Pro 13" 
+                <input type="text" id="itemName" placeholder="iPhone, MacBook, 或任何商品..." 
                        class="w-full p-7 bg-black border border-slate-800 rounded-[1.5rem] focus:ring-4 focus:ring-blue-500/50 text-white font-black outline-none text-2xl transition-all">
-                <button onclick="runV19()" id="runBtn" class="w-full bg-blue-600 text-white p-7 rounded-[1.5rem] font-black text-3xl hover:bg-blue-500 transition-all shadow-2xl">
+                <button onclick="runV21()" id="runBtn" class="w-full bg-blue-600 text-white p-7 rounded-[1.5rem] font-black text-3xl hover:bg-blue-500 transition-all active:scale-95 shadow-2xl">
                     執行深度清算
                 </button>
+                <div class="flex justify-center gap-4">
+                    <button onclick="clearStoredKey()" class="text-[9px] text-slate-700 hover:text-red-500 uppercase tracking-widest">註銷授權</button>
+                </div>
             </div>
             <div id="loading" class="hidden mt-12 flex flex-col items-center">
                 <div class="animate-spin rounded-full border-4 border-slate-800 border-t-blue-500 h-16 w-16 mb-6"></div>
-                <span class="text-[10px] font-black text-blue-400 uppercase tracking-widest animate-pulse">正在精煉規格數據...</span>
+                <span class="text-[10px] font-black text-blue-400 uppercase tracking-widest animate-pulse">正在進行全球利差對沖...</span>
             </div>
         </div>
 
         <div id="resultArea" class="hidden animate-in fade-in zoom-in duration-700">
-            <div id="mainCard" class="miniami-card p-12 bg-slate-900 rounded-[4rem] shadow-2xl text-center">
+            <div class="miniami-card p-12 bg-slate-900 rounded-[4rem] shadow-2xl text-center">
                 <h3 id="targetName" class="text-3xl font-black text-blue-400 uppercase mb-8 border-b border-slate-800 pb-4"></h3>
-                <div class="space-y-8 mb-16">
-                    <div class="flex justify-between items-center text-slate-400 text-sm font-black uppercase text-center">
+                <div class="space-y-10 mb-16">
+                    <div class="flex justify-between items-center text-slate-400 text-sm font-black uppercase">
                         <span>本地最低參考價</span>
                         <span class="text-3xl text-white" id="twPrice">--</span>
                     </div>
@@ -48,32 +61,54 @@
                         <span class="text-7xl text-white font-black" id="finalQuote">--</span>
                     </div>
                 </div>
-                <div class="mb-10 p-6 bg-blue-900/20 rounded-2xl border border-blue-800 text-blue-400 font-bold" id="profitHint"></div>
-                <button onclick="window.open('https://line.me/ti/p/您的LINE')" class="w-full bg-[#06C755] text-white py-8 rounded-[2rem] font-black text-3xl">
+                <button onclick="window.open('https://line.me/ti/p/您的LINE')" class="w-full bg-[#06C755] text-white py-8 rounded-[2rem] font-black text-3xl shadow-xl">
                     向管家預約面交
                 </button>
             </div>
         </div>
-
-        <div id="debugLog" class="hidden mt-10 p-8 bg-red-950/20 border border-red-900/30 rounded-3xl font-mono text-[10px] text-red-500 whitespace-pre-wrap leading-relaxed"></div>
     </main>
 
     <script>
-        const API_KEY = window.ENV_API_KEY || "";
+        // 初始化檢查授權
+        window.onload = function() {
+            if (!localStorage.getItem('MINIAMI_AUTH')) {
+                document.getElementById('authArea').classList.remove('hidden');
+            }
+        }
 
-        async function runV19() {
+        function saveAuthKey() {
+            const val = document.getElementById('keyInput').value;
+            if (val.startsWith('AIza')) {
+                localStorage.setItem('MINIAMI_AUTH', val.trim());
+                document.getElementById('authArea').classList.add('hidden');
+                alert('✅ 授權成功，算力節點已上線。');
+            } else {
+                alert('❌ 無效的授權碼，請確認是否為 AI Studio 產出的金鑰。');
+            }
+        }
+
+        function clearStoredKey() {
+            localStorage.removeItem('MINIAMI_AUTH');
+            location.reload();
+        }
+
+        async function runV21() {
+            const API_KEY = localStorage.getItem('MINIAMI_AUTH');
+            if (!API_KEY) {
+                document.getElementById('authArea').classList.remove('hidden');
+                return;
+            }
+
             const item = document.getElementById('itemName').value;
             if(!item) return;
 
             const btn = document.getElementById('runBtn');
             const loader = document.getElementById('loading');
             const resultArea = document.getElementById('resultArea');
-            const debugLog = document.getElementById('debugLog');
 
             btn.disabled = true;
             loader.classList.remove('hidden');
             resultArea.classList.add('hidden');
-            debugLog.classList.add('hidden');
 
             try {
                 const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${API_KEY}`;
@@ -82,42 +117,34 @@
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({
-                        contents: [{ parts: [{ text: `任務：清算「${item}」價格。
-                        1. 搜尋台灣電商與日本最低售價。
-                        2. 若有多種容量，統一抓取「最低配置(Entry-level)」價格。
-                        3. 嚴禁解釋，只回傳純 JSON 格式：{"jp":數字, "tw":數字}` }] }]
+                        contents: [{ parts: [{ text: `你現在是清算專家。搜尋「${item}」的台灣售價與日本售價。只回傳 JSON：{"jp":數字, "tw":數字}` }] }]
                     })
                 });
 
                 const data = await response.json();
-                
-                if (!response.ok) throw new Error(`Google 節點拒絕請求: ${data.error.message}`);
+                if (!response.ok) throw new Error(data.error.message);
 
                 const aiText = data.candidates[0].content.parts[0].text;
                 const match = aiText.match(/\{.*\}/s);
-                
-                if (!match) throw new Error("AI 回傳格式不符合清算規範，請再試一次。");
+                const prices = JSON.parse(match[0]);
 
-                const result = JSON.parse(match[0]);
+                // 清算邏輯
                 const EX_RATE = 0.2013;
-                const landed = ( (result.jp / 1.1) * EX_RATE ) * 1.05 + 800;
-                const profit = (result.tw - landed) * 0.5;
+                const landed = ( (prices.jp / 1.1) * EX_RATE ) * 1.05 + 800;
+                const profit = (prices.tw - landed) * 0.5;
 
                 document.getElementById('targetName').innerText = item;
-                document.getElementById('twPrice').innerText = `NT$ ${Math.round(result.tw).toLocaleString()}`;
+                document.getElementById('twPrice').innerText = `NT$ ${Math.round(prices.tw).toLocaleString()}`;
                 document.getElementById('finalQuote').innerText = `NT$ ${Math.round(landed + profit).toLocaleString()}`;
-                
-                if (profit > 0) {
-                    document.getElementById('profitHint').innerText = `💎 利差清算成功，為您節省 NT$ ${Math.round(profit).toLocaleString()}`;
-                } else {
-                    document.getElementById('profitHint').innerText = `🏠 本地採購優勢，已顯示最佳市價。`;
-                }
-
                 resultArea.classList.remove('hidden');
 
             } catch (err) {
-                debugLog.innerText = `❌ 偵錯日誌：\n${err.message}`;
-                debugLog.classList.remove('hidden');
+                console.error(err);
+                if (err.message.includes('API key')) {
+                    alert('❌ 金鑰無效，請註銷授權後重新輸入。');
+                } else {
+                    alert('❌ 數據傳輸異常，請再試一次。');
+                }
             } finally {
                 btn.disabled = false;
                 loader.classList.add('hidden');
