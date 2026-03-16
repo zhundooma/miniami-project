@@ -3,114 +3,110 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>MINIAMI | 清算節點</title>
+    <title>MINIAMI | 南屯清算節點</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;900&display=swap');
         body { font-family: 'Inter', sans-serif; background-color: #020617; color: #f8fafc; }
         .miniami-card { border: 1px solid transparent; background: linear-gradient(#020617, #020617) padding-box, linear-gradient(45deg, #3b82f6, #8b5cf6) border-box; }
+        .glow { box-shadow: 0 0 50px rgba(59, 130, 246, 0.4); }
     </style>
 </head>
 <body class="p-6 md:p-24 min-h-screen">
 
     <header class="max-w-4xl mx-auto text-center mb-16">
         <h1 class="text-8xl font-black mb-4 tracking-tighter text-blue-500 italic">MINIAMI</h1>
-        <p class="text-slate-500 text-[10px] tracking-[0.8em] uppercase font-black font-mono text-center">Taichung Nantun // V9.0 Final</p>
+        <p class="text-slate-500 text-[10px] tracking-[0.8em] uppercase font-black font-mono">Taichung Nantun // 2026 AI Connected V10</p>
     </header>
 
     <main class="max-w-xl mx-auto">
-        <div class="miniami-card p-12 mb-12 rounded-[3.5rem] bg-slate-900/95 shadow-[0_0_60px_rgba(59,130,246,0.4)] text-center">
-            <h2 class="text-[11px] font-black text-slate-400 uppercase tracking-widest mb-10">AI 全球價格清算引擎</h2>
+        <div class="miniami-card p-12 mb-12 rounded-[3.5rem] bg-slate-900/95 glow text-center">
+            <h2 class="text-[11px] font-black text-slate-400 uppercase tracking-widest mb-10">AI 全球利差清算系統</h2>
             <div class="space-y-6">
-                <input type="text" id="itemName" placeholder="iPhone 17 Pro Max" 
-                       class="w-full p-7 bg-black border border-slate-800 rounded-[1.5rem] focus:ring-4 focus:ring-blue-500/50 text-white font-black outline-none text-2xl">
-                <button onclick="runV9()" id="runBtn" class="w-full bg-blue-600 text-white p-7 rounded-[1.5rem] font-black text-3xl hover:bg-blue-500 transition-all shadow-2xl">
+                <input type="text" id="itemName" placeholder="例如：iPhone 17 Pro Max" 
+                       class="w-full p-7 bg-black border border-slate-800 rounded-[1.5rem] focus:ring-4 focus:ring-blue-500/50 text-white font-black outline-none text-2xl transition-all">
+                <button onclick="runV10()" id="runBtn" class="w-full bg-blue-600 text-white p-7 rounded-[1.5rem] font-black text-3xl hover:bg-blue-500 transition-all shadow-2xl">
                     執行 AI 實時清算
                 </button>
             </div>
-            
             <div id="loading" class="hidden mt-12 flex flex-col items-center">
                 <div class="animate-spin rounded-full border-4 border-slate-800 border-t-blue-500 h-16 w-16 mb-6"></div>
-                <span class="text-[10px] font-black text-blue-400 uppercase tracking-widest animate-pulse">連線至 Google 數據中樞...</span>
+                <span class="text-[10px] font-black text-blue-400 uppercase tracking-widest animate-pulse">正在穿透 Google 雲端節點...</span>
             </div>
         </div>
 
-        <div id="resultArea" class="hidden animate-in fade-in duration-700">
+        <div id="resultArea" class="hidden animate-in fade-in zoom-in duration-700">
             <div class="miniami-card p-12 bg-slate-900 rounded-[4rem] shadow-2xl text-center">
                 <h3 id="targetName" class="text-3xl font-black text-blue-400 uppercase mb-10 border-b border-slate-800 pb-6"></h3>
                 <div class="space-y-10 mb-16">
                     <div class="flex justify-between items-center text-slate-400 text-sm font-black uppercase">
-                        <span>市場官網定價 (TW)</span>
+                        <span>市場定價 (TW)</span>
                         <span class="text-3xl text-white" id="twPrice">--</span>
                     </div>
                     <div class="flex justify-between items-center border-t border-slate-800 pt-10">
-                        <span class="text-blue-500 text-sm font-black uppercase tracking-widest">MINIAMI 最終清算價</span>
+                        <span class="text-blue-500 text-sm font-black uppercase tracking-widest">MINIAMI 清算價</span>
                         <span class="text-7xl text-white font-black" id="finalQuote">--</span>
                     </div>
                 </div>
-                <button onclick="window.open('https://line.me/ti/p/您的LINE')" class="w-full bg-[#06C755] text-white py-8 rounded-[2rem] font-black text-3xl">
+                <button onclick="window.open('https://line.me/ti/p/您的LINE')" class="w-full bg-[#06C755] text-white py-8 rounded-[2rem] font-black text-3xl shadow-xl">
                     預約面交 (台中南屯)
                 </button>
             </div>
         </div>
 
-        <div id="errorLog" class="hidden mt-10 p-8 bg-red-900/10 border border-red-900/30 rounded-3xl font-mono text-[10px] text-red-500 whitespace-pre-wrap"></div>
+        <div id="debugLog" class="hidden mt-10 p-8 bg-red-900/10 border border-red-900/30 rounded-3xl font-mono text-[10px] text-red-500 whitespace-pre-wrap leading-relaxed"></div>
     </main>
 
     <script>
-        // 自動修復：自動去除可能誤貼的空格
-        const RAW_KEY = "AIzaSyDPzTU6oeFnpPhN1tYG72-rM3cpws57uAg";
-        const API_KEY = RAW_KEY.trim();
+        const API_KEY = "AIzaSyDPzTU6oeFnpPhN1tYG72-rM3cpws57uAg";
 
-        async function runV9() {
+        async function runV10() {
             const item = document.getElementById('itemName').value;
             if(!item) return;
 
             const btn = document.getElementById('runBtn');
             const loader = document.getElementById('loading');
             const resultArea = document.getElementById('resultArea');
-            const errorLog = document.getElementById('errorLog');
+            const debugLog = document.getElementById('debugLog');
 
             btn.disabled = true;
             loader.classList.remove('hidden');
             resultArea.classList.add('hidden');
-            errorLog.classList.add('hidden');
+            debugLog.classList.add('hidden');
 
             try {
-                // 修改處：使用 v1 正式穩定版路徑，避開 v1beta 的 404 問題
-                const url = `https://generativelanguage.googleapis.com/v1/models/gemini-1.5-flash:generateContent?key=${API_KEY}`;
+                // 修正關鍵：2026 年 Free Tier 最穩定的路徑組合
+                const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${API_KEY}`;
                 
                 const response = await fetch(url, {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({
-                        contents: [{ parts: [{ text: `你現在是清算專家。搜尋產品「${item}」的台灣(TWD)與日本(JPY)售價。只回傳 JSON：{"jp":數字, "tw":數字}。` }] }]
+                        contents: [{ parts: [{ text: `Search "${item}" in TW(TWD) and JP(JPY) for March 2026. Return ONLY raw JSON: {"jp": (yen), "tw": (twd)}` }] }]
                     })
                 });
 
-                const data = await response.json();
-
                 if (!response.ok) {
-                    throw new Error(`[API 拒絕] ${data.error ? data.error.message : '未知錯誤'}\n請確保金鑰對應的專案已在 Google Cloud 啟用 API。`);
+                    const errorData = await response.json();
+                    throw new Error(`[連線失敗] 代碼: ${response.status}\n原因: ${errorData.error.message}`);
                 }
 
+                const data = await response.json();
                 const aiText = data.candidates[0].content.parts[0].text;
                 const prices = JSON.parse(aiText.match(/\{.*\}/s)[0]);
 
-                // 獲利對沖邏輯 (50/50)
                 const EX_RATE = 0.2013;
                 const landed = ( (prices.jp / 1.1) * EX_RATE ) * 1.05 + 800;
-                const profit = (prices.tw - landed) * 0.5;
+                const final = landed + ( (prices.tw - landed) * 0.5 );
 
                 document.getElementById('targetName').innerText = item;
                 document.getElementById('twPrice').innerText = `NT$ ${prices.tw.toLocaleString()}`;
-                document.getElementById('finalQuote').innerText = `NT$ ${Math.round(landed + profit).toLocaleString()}`;
-                
+                document.getElementById('finalQuote').innerText = `NT$ ${Math.round(final).toLocaleString()}`;
                 resultArea.classList.remove('hidden');
 
             } catch (err) {
-                errorLog.innerText = `❌ 通訊異常：\n${err.message}`;
-                errorLog.classList.remove('hidden');
+                debugLog.innerText = `❌ 通訊診斷：\n${err.message}\n\n💡 建議：如果顯示 404，請點擊下方診斷連結確認模型是否存在。`;
+                debugLog.classList.remove('hidden');
             } finally {
                 btn.disabled = false;
                 loader.classList.add('hidden');
