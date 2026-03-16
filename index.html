@@ -59,7 +59,7 @@
     </main>
 
     <script>
-        const API_KEY = "AIzaSyDPzTU6oeFnpPhN1tYG72-rM3cpws57uAg";
+        const API_KEY = window.ENV_API_KEY || "";
 
         async function runV19() {
             const item = document.getElementById('itemName').value;
