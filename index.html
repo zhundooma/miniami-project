@@ -9,113 +9,107 @@
         @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;900&display=swap');
         body { font-family: 'Inter', sans-serif; background-color: #020617; color: #f8fafc; }
         .miniami-card { border: 1px solid transparent; background: linear-gradient(#020617, #020617) padding-box, linear-gradient(45deg, #3b82f6, #8b5cf6) border-box; }
-        .glow-blue { box-shadow: 0 0 50px rgba(59, 130, 246, 0.3); }
     </style>
 </head>
-<body class="p-6 md:p-20 min-h-screen">
+<body class="p-6 md:p-24 min-h-screen">
 
     <header class="max-w-4xl mx-auto text-center mb-16">
-        <h1 class="text-7xl font-black mb-4 tracking-tighter text-blue-500 italic">MINIAMI</h1>
-        <p class="text-slate-500 text-[10px] tracking-[0.8em] uppercase font-black">2026 AI Clearing // Taichung Nantun V7.0</p>
+        <h1 class="text-8xl font-black mb-4 tracking-tighter text-blue-500 italic">MINIAMI</h1>
+        <p class="text-slate-500 text-[10px] tracking-[0.8em] uppercase font-black font-mono">2026 AI Oracle // Taichung Nantun Node</p>
     </header>
 
     <main class="max-w-xl mx-auto">
-        <div class="miniami-card p-10 mb-12 rounded-[3.5rem] glow-blue bg-slate-900/95">
-            <h2 class="text-[11px] font-black text-slate-400 uppercase tracking-widest mb-8 text-center">真實 AI 全球利差清算引擎</h2>
+        <div class="miniami-card p-12 mb-12 rounded-[3.5rem] bg-slate-900/95 shadow-[0_0_60px_rgba(59,130,246,0.3)]">
+            <h2 class="text-[11px] font-black text-slate-400 uppercase tracking-widest mb-10 text-center">真實 AI 全球利差清算</h2>
             <div class="space-y-6">
-                <input type="text" id="itemName" placeholder="例如：MacBook Pro 14 M4" 
-                       class="w-full p-6 bg-black border border-slate-800 rounded-[1.5rem] focus:ring-4 focus:ring-blue-500/50 text-white font-black outline-none text-2xl">
-                <button onclick="runV7Clearing()" id="runBtn" class="w-full bg-blue-600 text-white p-7 rounded-[1.5rem] font-black text-3xl hover:bg-blue-500 transition-all active:scale-95 shadow-2xl">
+                <input type="text" id="itemName" placeholder="例如：iPhone 17 Pro Max" 
+                       class="w-full p-7 bg-black border border-slate-800 rounded-[1.5rem] focus:ring-4 focus:ring-blue-500/50 text-white font-black outline-none text-2xl transition-all">
+                <button onclick="runV8()" id="runBtn" class="w-full bg-blue-600 text-white p-7 rounded-[1.5rem] font-black text-3xl hover:bg-blue-500 transition-all active:scale-95">
                     執行 AI 實時清算
                 </button>
             </div>
             
             <div id="loading" class="hidden mt-12 flex flex-col items-center">
                 <div class="animate-spin rounded-full border-4 border-slate-800 border-t-blue-500 h-16 w-16 mb-6"></div>
-                <span class="text-[10px] font-black text-blue-400 uppercase tracking-[0.3em] animate-pulse">正在穿透 Google 全球節點...</span>
+                <span class="text-[10px] font-black text-blue-400 uppercase tracking-widest animate-pulse">正在調用 MINI 專案算力...</span>
             </div>
         </div>
 
-        <div id="resultArea" class="hidden animate-in fade-in duration-700">
+        <div id="resultArea" class="hidden animate-in fade-in zoom-in duration-700">
             <div class="miniami-card p-12 bg-slate-900 rounded-[4rem] shadow-2xl text-center">
-                <h3 id="targetName" class="text-3xl font-black text-blue-400 uppercase mb-8 border-b border-slate-800 pb-4"></h3>
-                <div class="space-y-6 mb-12">
-                    <p class="text-[10px] text-slate-500 font-black uppercase tracking-[0.5em]">最終清算報價 (NTD)</p>
-                    <p class="text-7xl font-black text-white" id="finalQuote">--</p>
-                </div>
-                <div class="grid grid-cols-2 gap-4 mb-10 bg-black/40 p-6 rounded-3xl border border-slate-800">
-                    <div>
-                        <p class="text-[9px] text-slate-600 uppercase font-black mb-1">客戶獲得</p>
-                        <p class="text-emerald-400 font-black text-2xl" id="clientGain">--</p>
+                <h3 id="targetName" class="text-3xl font-black text-blue-400 uppercase mb-10 border-b border-slate-800 pb-6"></h3>
+                <div class="space-y-10 mb-16">
+                    <div class="flex justify-between items-center text-slate-400 text-sm font-black uppercase">
+                        <span>市場參考價 (TW)</span>
+                        <span class="text-3xl text-white" id="twPrice">--</span>
                     </div>
-                    <div class="border-l border-slate-800">
-                        <p class="text-[9px] text-slate-600 uppercase font-black mb-1">管家報酬</p>
-                        <p class="text-blue-400 font-black text-2xl" id="serviceFee">--</p>
+                    <div class="flex justify-between items-center border-t border-slate-800 pt-10">
+                        <span class="text-blue-500 text-sm font-black uppercase tracking-widest">MINIAMI 最終清算價</span>
+                        <span class="text-7xl text-white font-black" id="finalQuote">--</span>
                     </div>
                 </div>
-                <button onclick="window.open('https://line.me/ti/p/您的LINE')" class="w-full bg-[#06C755] text-white py-6 rounded-2xl font-black text-2xl shadow-xl">
+                <button onclick="window.open('https://line.me/ti/p/您的LINE')" class="w-full bg-[#06C755] text-white py-8 rounded-[2rem] font-black text-3xl shadow-xl">
                     聯繫管家 (面交預約)
                 </button>
             </div>
         </div>
 
-        <div id="errorArea" class="hidden mt-10 p-6 bg-red-900/10 border border-red-900/30 rounded-3xl font-mono text-[10px] text-red-500 whitespace-pre-wrap leading-relaxed"></div>
+        <div id="errorLog" class="hidden mt-10 p-8 bg-red-900/10 border border-red-900/30 rounded-3xl font-mono text-[11px] text-red-500 whitespace-pre-wrap leading-relaxed"></div>
     </main>
 
     <script>
-        // 請務必替換成你在 AI Studio 點擊 "Create API key in NEW project" 得到的新金鑰
-        const API_KEY = "AIzaSyDPzTU6oeFnpPhN1tYG72-rM3cpws57uAg";
+        // ⚠️ 請在這裡替換成您那把 ...7uAg 結尾的完整新金鑰
+        const API_KEY = "這裡貼上您的新金鑰";
 
-        async function runV7Clearing() {
+        async function runV8() {
             const item = document.getElementById('itemName').value;
             if(!item) return;
 
             const btn = document.getElementById('runBtn');
             const loader = document.getElementById('loading');
             const resultArea = document.getElementById('resultArea');
-            const errorArea = document.getElementById('errorArea');
+            const errorLog = document.getElementById('errorLog');
 
             btn.disabled = true;
             loader.classList.remove('hidden');
             resultArea.classList.add('hidden');
-            errorArea.classList.add('hidden');
+            errorLog.classList.add('hidden');
 
             try {
-                // V7.0 策略：使用最標準的 v1 路徑 + 基礎模型名稱，避開 beta 頻道的 404
-                const url = `https://generativelanguage.googleapis.com/v1/models/gemini-1.5-flash:generateContent?key=${API_KEY}`;
+                // 使用 2026 年最穩定的 beta 路徑，確保穿透
+                const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${API_KEY}`;
                 
                 const response = await fetch(url, {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({
-                        contents: [{ parts: [{ text: `你現在是跨境資產分析師。請搜尋「${item}」在 2026 年 3 月的台灣與日本售價。只回傳 JSON：{"jp":日幣含稅, "tw":台幣官網}。` }] }]
+                        contents: [{ parts: [{ text: `你現在是跨境清算 AI。搜尋產品「${item}」的台灣售價(TWD)與日本含稅價(JPY)。請回傳 JSON：{"jp":數字, "tw":數字}。` }] }]
                     })
                 });
 
                 if (!response.ok) {
-                    const errorData = await response.json();
-                    throw new Error(`[路由拒絕] 狀態: ${response.status}\n詳細訊息: ${errorData.error.message}\n\n解決方案：請嘗試在 AI Studio 重新生成一把 "NEW Project" 的金鑰。`);
+                    const errData = await response.json();
+                    throw new Error(`[連線失敗] ${errData.error.message}\n提示：請確認是否點擊了 Google Cloud 的 ENABLE 按鈕。`);
                 }
 
                 const data = await response.json();
                 const aiText = data.candidates[0].content.parts[0].text;
                 const prices = JSON.parse(aiText.match(/\{.*\}/s)[0]);
 
-                // 南屯清算邏輯 50/50
+                // 清算邏輯 (Richard 50/50 協議)
                 const EX_RATE = 0.2013;
                 const landed = ( (prices.jp / 1.1) * EX_RATE ) * 1.05 + 800;
-                const profit = (prices.tw - landed) * 0.5;
+                const splitProfit = (prices.tw - landed) * 0.5;
 
                 document.getElementById('targetName').innerText = item;
-                document.getElementById('clientGain').innerText = `NT$ ${Math.round(profit).toLocaleString()}`;
-                document.getElementById('serviceFee').innerText = `NT$ ${Math.round(profit).toLocaleString()}`;
-                document.getElementById('finalQuote').innerText = `NT$ ${Math.round(landed + profit).toLocaleString()}`;
+                document.getElementById('twPrice').innerText = `NT$ ${prices.tw.toLocaleString()}`;
+                document.getElementById('finalQuote').innerText = `NT$ ${Math.round(landed + splitProfit).toLocaleString()}`;
                 
                 resultArea.classList.remove('hidden');
 
             } catch (err) {
-                errorArea.innerText = `❌ AI 節點連線中斷：\n${err.message}`;
-                errorArea.classList.remove('hidden');
+                errorLog.innerText = `❌ 系統報錯：\n${err.message}`;
+                errorLog.classList.remove('hidden');
             } finally {
                 btn.disabled = false;
                 loader.classList.add('hidden');
