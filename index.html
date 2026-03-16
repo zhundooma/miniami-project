@@ -9,47 +9,47 @@
         @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;900&display=swap');
         body { font-family: 'Inter', sans-serif; background-color: #020617; color: #f8fafc; }
         .miniami-card { border: 1px solid transparent; background: linear-gradient(#020617, #020617) padding-box, linear-gradient(45deg, #3b82f6, #8b5cf6) border-box; }
-        .glow { box-shadow: 0 0 60px rgba(59, 130, 246, 0.35); }
+        .glow { box-shadow: 0 0 60px rgba(59, 130, 246, 0.45); }
     </style>
 </head>
 <body class="p-6 md:p-24 min-h-screen">
 
     <header class="max-w-4xl mx-auto text-center mb-16">
         <h1 class="text-8xl font-black mb-4 tracking-tighter text-blue-500 italic">MINIAMI</h1>
-        <p class="text-slate-500 text-[10px] tracking-[0.8em] uppercase font-black font-mono">Taichung Nantun // 2026 AI Connected V12</p>
+        <p class="text-slate-500 text-[10px] tracking-[0.8em] uppercase font-black font-mono">Taichung Nantun Node // V14.0 Semantic Engine</p>
     </header>
 
     <main class="max-w-xl mx-auto">
         <div class="miniami-card p-12 mb-12 rounded-[3.5rem] bg-slate-900/95 glow text-center">
-            <h2 class="text-[11px] font-black text-slate-400 uppercase tracking-widest mb-10">AI 全球價格清算中心</h2>
+            <h2 class="text-[11px] font-black text-slate-400 uppercase tracking-widest mb-10">AI 全球價格獲取終端</h2>
             <div class="space-y-6">
-                <input type="text" id="itemName" placeholder="例如：iPhone 17 Pro Max" 
+                <input type="text" id="itemName" placeholder="試試輸入 Switch 2 或 MacBook M4" 
                        class="w-full p-7 bg-black border border-slate-800 rounded-[1.5rem] focus:ring-4 focus:ring-blue-500/50 text-white font-black outline-none text-2xl transition-all">
-                <button onclick="runV12()" id="runBtn" class="w-full bg-blue-600 text-white p-7 rounded-[1.5rem] font-black text-3xl hover:bg-blue-500 transition-all active:scale-95 shadow-2xl">
-                    執行實時清算
+                <button onclick="runV14()" id="runBtn" class="w-full bg-blue-600 text-white p-7 rounded-[1.5rem] font-black text-3xl hover:bg-blue-500 transition-all shadow-2xl">
+                    執行深度清算
                 </button>
             </div>
             <div id="loading" class="hidden mt-12 flex flex-col items-center">
                 <div class="animate-spin rounded-full border-4 border-slate-800 border-t-blue-500 h-16 w-16 mb-6"></div>
-                <span class="text-[10px] font-black text-blue-400 uppercase tracking-widest animate-pulse">正在調用 Gemini 2.5 核心算力...</span>
+                <span class="text-[10px] font-black text-blue-400 uppercase tracking-widest animate-pulse">正在進行語義推理與利差計算...</span>
             </div>
         </div>
 
-        <div id="resultArea" class="hidden animate-in fade-in zoom-in duration-700">
+        <div id="resultArea" class="hidden animate-in fade-in duration-700">
             <div class="miniami-card p-12 bg-slate-900 rounded-[4rem] shadow-2xl text-center">
                 <h3 id="targetName" class="text-3xl font-black text-blue-400 uppercase mb-10 border-b border-slate-800 pb-6"></h3>
                 <div class="space-y-10 mb-16">
                     <div class="flex justify-between items-center text-slate-400 text-sm font-black uppercase">
-                        <span>市場定價 (TW)</span>
+                        <span>預估市場定價 (TW)</span>
                         <span class="text-3xl text-white" id="twPrice">--</span>
                     </div>
                     <div class="flex justify-between items-center border-t border-slate-800 pt-10">
-                        <span class="text-blue-500 text-sm font-black uppercase tracking-widest">MINIAMI 清算報價</span>
+                        <span class="text-blue-500 text-sm font-black uppercase tracking-widest">MINIAMI 清算推薦價</span>
                         <span class="text-7xl text-white font-black" id="finalQuote">--</span>
                     </div>
                 </div>
                 <button onclick="window.open('https://line.me/ti/p/您的LINE')" class="w-full bg-[#06C755] text-white py-8 rounded-[2rem] font-black text-3xl">
-                    預約面交 (台中南屯)
+                    向管家索取對帳單
                 </button>
             </div>
         </div>
@@ -60,7 +60,7 @@
     <script>
         const API_KEY = "AIzaSyDPzTU6oeFnpPhN1tYG72-rM3cpws57uAg";
 
-        async function runV12() {
+        async function runV14() {
             const item = document.getElementById('itemName').value;
             if(!item) return;
 
@@ -75,37 +75,42 @@
             debugLog.classList.add('hidden');
 
             try {
-                // 修正核心：根據截圖改用 gemini-2.5-flash
                 const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${API_KEY}`;
                 
                 const response = await fetch(url, {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({
-                        contents: [{ parts: [{ text: `Search "${item}" in TW(TWD) and JP(JPY) for March 2026. Return ONLY JSON: {"jp": (yen), "tw": (twd)}` }] }]
+                        contents: [{ parts: [{ text: `任務：分析產品「${item}」。
+                        1. 查找 2026 年最新台灣與日本官網價。
+                        2. 若無官方定價，根據現有洩漏資訊或前代價格進行預測推理。
+                        3. 嚴禁回傳空值。
+                        4. 只回傳此 JSON 格式：{"jp":數字, "tw":數字}` }] }]
                     })
                 });
 
-                if (!response.ok) {
-                    const error = await response.json();
-                    throw new Error(`Google API 報錯: ${error.error.message}`);
-                }
-
                 const data = await response.json();
                 const aiText = data.candidates[0].content.parts[0].text;
-                const prices = JSON.parse(aiText.match(/\{.*\}/s)[0]);
+                const match = aiText.match(/\{.*\}/s);
+                const prices = JSON.parse(match[0]);
+
+                // 安全渲染邏輯：賦予預設值防止閃退
+                const tw = Number(prices.tw) || 0;
+                const jp = Number(prices.jp) || 0;
+                
+                if (tw === 0 || jp === 0) throw new Error("該品項過於神秘，AI 無法在當前時空建立定價模型。");
 
                 const EX_RATE = 0.2013;
-                const landed = ( (prices.jp / 1.1) * EX_RATE ) * 1.05 + 800;
-                const final = landed + ( (prices.tw - landed) * 0.5 );
+                const landed = ( (jp / 1.1) * EX_RATE ) * 1.05 + 800;
+                const final = landed + ( (tw - landed) * 0.5 );
 
                 document.getElementById('targetName').innerText = item;
-                document.getElementById('twPrice').innerText = `NT$ ${prices.tw.toLocaleString()}`;
+                document.getElementById('twPrice').innerText = `NT$ ${Math.round(tw).toLocaleString()}`;
                 document.getElementById('finalQuote').innerText = `NT$ ${Math.round(final).toLocaleString()}`;
                 resultArea.classList.remove('hidden');
 
             } catch (err) {
-                debugLog.innerText = `❌ 通訊異常：\n${err.message}`;
+                debugLog.innerText = `❌ 清算節點回報：\n${err.message}`;
                 debugLog.classList.remove('hidden');
             } finally {
                 btn.disabled = false;
