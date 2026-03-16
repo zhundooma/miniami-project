@@ -3,30 +3,33 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>MINIAMI | 泛亞獵人 V37.0</title>
+    <title>MINIAMI | 旗艦資產狙擊</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;900&display=swap');
-        body { font-family: 'Inter', sans-serif; background-color: #020617; color: #f8fafc; }
+        body { font-family: 'Inter', sans-serif; background-color: #020617; color: #f8fafc; overflow-x: hidden; }
         .miniami-card { border: 1px solid #1e293b; background: #0f172a; }
         .text-neon { color: #3b82f6; text-shadow: 0 0 15px rgba(59, 130, 246, 0.4); }
+        .loading-bar { height: 2px; background: linear-gradient(90deg, #3b82f6, #8b5cf6); transition: width 0.5s ease; }
     </style>
 </head>
 <body class="p-6 md:p-24 min-h-screen flex flex-col items-center">
 
     <header class="text-center mb-16">
         <h1 class="text-7xl font-black mb-4 tracking-tighter italic text-neon uppercase">MINIAMI</h1>
-        <p class="text-slate-500 text-[10px] tracking-[0.8em] uppercase font-black">Taichung Nantun // V37.0 Robust Parser</p>
+        <p class="text-slate-500 text-[10px] tracking-[0.8em] uppercase font-black">Taichung Nantun // V38.0 Flagship Sniper</p>
     </header>
 
     <main class="w-full max-w-xl">
         <div class="miniami-card p-12 mb-12 rounded-[3.5rem] shadow-2xl border border-slate-800">
-            <h2 class="text-[11px] font-black text-slate-400 uppercase tracking-widest mb-10 text-center">泛亞獵人模式：支援新舊資產清算</h2>
+            <h2 class="text-[11px] font-black text-slate-400 uppercase tracking-widest mb-10 text-center">旗艦資產對帳模式</h2>
             <div class="space-y-6">
-                <input type="text" id="itemName" placeholder="例如: iPhone 12 Pro Max (舊款亦可)" class="w-full p-7 bg-black border border-slate-800 rounded-[1.5rem] text-white font-black text-2xl outline-none focus:ring-4 focus:ring-blue-500/30">
-                <button onclick="runV37()" id="runBtn" class="w-full bg-blue-600 text-white p-7 rounded-[1.5rem] font-black text-3xl hover:bg-blue-500 transition-all">執行強韌對帳</button>
+                <input type="text" id="itemName" placeholder="例如: iPhone 17 Pro Max 256G" class="w-full p-7 bg-black border border-slate-800 rounded-[1.5rem] text-white font-black text-2xl outline-none focus:ring-4 focus:ring-blue-500/30">
+                <button onclick="runV38()" id="runBtn" class="w-full bg-blue-600 text-white p-7 rounded-[1.5rem] font-black text-3xl hover:bg-blue-500 transition-all shadow-xl">開始泛亞狙擊</button>
             </div>
-            <div id="loading" class="hidden mt-8 text-center text-[10px] text-blue-400 font-black animate-pulse uppercase tracking-[0.2em]">正在執行多維度資產審計...</div>
+            <div id="loaderContainer" class="hidden mt-8 w-full bg-slate-800 rounded-full h-1 overflow-hidden">
+                <div id="loaderBar" class="loading-bar w-0"></div>
+            </div>
         </div>
 
         <div id="resultArea" class="hidden animate-in fade-in zoom-in duration-500">
@@ -36,79 +39,79 @@
                 <div class="mb-10 p-8 bg-slate-800/30 rounded-3xl border border-slate-800">
                     <div class="flex justify-between items-center mb-6">
                         <div class="flex flex-col">
-                            <span class="text-slate-400 text-[10px] font-black uppercase">官方標竿/市場估價</span>
+                            <span class="text-slate-400 text-[10px] font-black uppercase">官方建議售價</span>
                             <span class="text-lg text-slate-500 line-through" id="msrpPrice">--</span>
                         </div>
                         <div class="flex flex-col items-end">
-                            <span class="text-slate-400 text-[10px] font-black">本地街價 (<span id="sourceLabel" class="text-blue-500">來源</span>)</span>
+                            <span class="text-slate-400 text-[10px] font-black">本地最低價 (<span id="sourceLabel" class="text-blue-500">來源</span>)</span>
                             <span class="text-3xl text-white font-black" id="twPrice">--</span>
                         </div>
                     </div>
-                    <button id="affiliateBtn" class="w-full py-5 bg-orange-600 text-white font-black rounded-2xl shadow-lg">前往來源導購</button>
+                    <button id="affiliateBtn" class="w-full py-5 bg-orange-600 text-white font-black rounded-2xl shadow-lg hover:bg-orange-500 transition-all">前往電商來源頁面</button>
                 </div>
 
                 <div class="space-y-6 border-t border-slate-800 pt-10">
                     <div class="flex justify-between items-center">
-                        <span class="text-slate-500 text-xs font-black uppercase tracking-widest italic">泛亞最低落地底價 (<span id="bestCountry" class="text-emerald-400">來源</span>)</span>
+                        <span class="text-slate-500 text-xs font-black uppercase tracking-widest">泛亞最佳落地底價 (<span id="bestCountry" class="text-emerald-400">來源</span>)</span>
                         <span class="text-xl text-slate-400 font-mono" id="rawLanded">--</span>
                     </div>
                     <div class="flex justify-between items-center">
-                        <span class="text-blue-500 text-sm font-black uppercase tracking-widest italic">MINIAMI 清算報價</span>
+                        <span class="text-blue-500 text-sm font-black uppercase tracking-widest italic">MINIAMI 代購報價</span>
                         <span class="text-6xl text-white font-black" id="finalQuote">--</span>
                     </div>
                 </div>
 
                 <div id="profitHint" class="mt-10 p-6 bg-blue-900/20 rounded-2xl border border-blue-800 text-blue-400 font-bold text-xs text-center"></div>
                 
-                <button onclick="window.open('https://line.me/ti/p/您的LINE')" class="w-full mt-10 bg-[#06C755] text-white py-8 rounded-[2rem] font-black text-3xl shadow-xl">預約南屯面交</button>
+                <button onclick="window.open('https://line.me/ti/p/您的LINE')" class="w-full mt-10 bg-[#06C755] text-white py-8 rounded-[2rem] font-black text-3xl shadow-xl hover:scale-105 transition-all">預約南屯面交</button>
             </div>
         </div>
     </main>
 
     <script>
-        async function runV37() {
+        async function runV38() {
             const item = document.getElementById('itemName').value;
             const API_KEY = localStorage.getItem('MINIAMI_KEY');
             if(!item || !API_KEY) return;
 
             const btn = document.getElementById('runBtn');
-            const loader = document.getElementById('loading');
             const resultArea = document.getElementById('resultArea');
+            const bar = document.getElementById('loaderBar');
+            document.getElementById('loaderContainer').classList.remove('hidden');
             
             btn.disabled = true;
-            loader.classList.remove('hidden');
             resultArea.classList.add('hidden');
+            bar.style.width = '30%';
 
             try {
                 const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${API_KEY}`;
                 
+                // 強制 JSON 模式並減少描述，提高 Flash 穩定度
                 const response = await fetch(url, {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({
-                        contents: [{ parts: [{ text: `你現在是 Richard 的數據審計師。對帳「${item}」。
-                        要求：針對台灣(MOMO/蝦皮)、日本、韓國、泰國、菲律賓、越南進行全新品比價。
-                        注意：如果是停產舊款，請回報市場上剩餘的全新品平均價。
-                        請務必嚴格遵守 JSON 格式回傳，不可有任何解釋文字：
+                        contents: [{ parts: [{ text: `對帳「${item}」。
+                        1. 尋找台灣(MOMO/蝦皮)、日本、韓國、泰國、越南、菲律賓的實時全新品價格。
+                        2. 必須包含官方 MSRP 作為基準。
+                        3. 若某國缺貨，請以該國市場平均溢價估算。
+                        回傳 JSON 格式，嚴禁多言：
                         {"msrp":數字, "tw":數字, "platform":"來源", "prices":{"jp":數字, "kr":數字, "th":數字, "vn":數字, "ph":數字}}` }] }]
                     })
                 });
 
-                const rawData = await response.json();
-                const textResponse = rawData.candidates[0].content.parts[0].text;
-                
-                // 強韌解析：確保能抓到 JSON
-                const jsonMatch = textResponse.match(/\{.*\}/s);
-                if (!jsonMatch) throw new Error("數據格式異常");
-                const result = JSON.parse(jsonMatch[0]);
+                bar.style.width = '70%';
+                const data = await response.json();
+                const text = data.candidates[0].content.parts[0].text;
+                const result = JSON.parse(text.match(/\{.*\}/s)[0]);
 
-                // 泛亞對沖矩陣 (匯率均值 2026.03)
+                // 泛亞清算矩陣 (匯率基準 2026.03)
                 const matrix = [
-                    { country: "日本", cost: ( (result.prices.jp || 9999999) / 1.1 * 0.2013 ) * 1.05 + 800 },
-                    { country: "韓國", cost: ( (result.prices.kr || 9999999) * 0.0245 ) * 1.05 + 1000 },
-                    { country: "泰國", cost: ( (result.prices.th || 9999999) * 0.91 ) * 1.05 + 1200 },
-                    { country: "菲律賓", cost: ( (result.prices.ph || 9999999) * 0.58 ) * 1.05 + 1500 },
-                    { country: "越南", cost: ( (result.prices.vn || 9999999) * 0.0013 ) * 1.05 + 1500 }
+                    { name: "日本", cost: ( (result.prices.jp || 999999) / 1.1 * 0.2013 ) * 1.05 + 800 },
+                    { name: "韓國", cost: ( (result.prices.kr || 999999) * 0.0245 ) * 1.05 + 1000 },
+                    { name: "泰國", cost: ( (result.prices.th || 999999) * 0.91 ) * 1.05 + 1200 },
+                    { name: "菲律賓", cost: ( (result.prices.ph || 999999) * 0.58 ) * 1.05 + 1500 },
+                    { name: "越南", cost: ( (result.prices.vn || 999999) * 0.0013 ) * 1.05 + 1500 }
                 ];
 
                 const best = matrix.reduce((p, c) => (p.cost < c.cost) ? p : c);
@@ -118,19 +121,27 @@
                 document.getElementById('msrpPrice').innerText = `NT$ ${Math.round(result.msrp).toLocaleString()}`;
                 document.getElementById('twPrice').innerText = `NT$ ${Math.round(result.tw).toLocaleString()}`;
                 document.getElementById('sourceLabel').innerText = result.platform;
-                document.getElementById('bestCountry').innerText = best.country;
+                document.getElementById('bestCountry').innerText = best.name;
                 document.getElementById('rawLanded').innerText = `NT$ ${Math.round(best.cost).toLocaleString()}`;
                 document.getElementById('finalQuote').innerText = `NT$ ${Math.round(finalQuote).toLocaleString()}`;
                 
                 const sUrl = result.platform.toLowerCase().includes('shopee') ? `https://shopee.tw/search?keyword=${encodeURIComponent(item)}` : `https://www.momoshop.com.tw/search/searchShop.jsp?keyword=${encodeURIComponent(item)}`;
                 document.getElementById('affiliateBtn').onclick = () => window.open(sUrl);
                 
-                document.getElementById('profitHint').innerText = result.tw <= best.cost ? "🏠 掃描完成：本地電商價格具備主場優勢。" : `💎 對沖成功：透過 ${best.country} 節點利差對沖 NT$ ${Math.round(result.tw - finalQuote).toLocaleString()}。`;
+                document.getElementById('profitHint').innerText = result.tw <= best.cost ? "🏠 泛亞掃描完成：本地價格極具競爭力。" : `💎 對沖成功：透過 ${best.name} 節點可對沖利差 NT$ ${Math.round(result.tw - finalQuote).toLocaleString()}。`;
 
-                resultArea.classList.remove('hidden');
+                bar.style.width = '100%';
+                setTimeout(() => { 
+                    resultArea.classList.remove('hidden'); 
+                    document.getElementById('loaderContainer').classList.add('hidden');
+                }, 500);
+
             } catch (err) {
-                alert("此商品數據點過於混亂（可能已停產），請嘗試搜尋較新型號，或再次執行狙擊。");
-            } finally { btn.disabled = false; loader.classList.add('hidden'); }
+                alert("泛亞數據鏈結超載，請縮短商品名稱（例如只打：iPhone 17 Pro）再次試試。");
+            } finally { 
+                btn.disabled = false; 
+                bar.style.width = '0%';
+            }
         }
     </script>
 </body>
