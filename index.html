@@ -3,76 +3,73 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>MINIAMI | 全球利差清算</title>
+    <title>MINIAMI | 極限利差清算</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;900&display=swap');
         body { font-family: 'Inter', sans-serif; background-color: #020617; color: #f8fafc; }
         .miniami-card { border: 1px solid transparent; background: linear-gradient(#020617, #020617) padding-box, linear-gradient(45deg, #3b82f6, #8b5cf6) border-box; }
-        .glow { box-shadow: 0 0 60px rgba(59, 130, 246, 0.45); }
+        .glow-blue { box-shadow: 0 0 60px rgba(59, 130, 246, 0.4); }
     </style>
 </head>
 <body class="p-6 md:p-24 min-h-screen">
 
     <header class="max-w-4xl mx-auto text-center mb-16">
         <h1 class="text-8xl font-black mb-4 tracking-tighter text-blue-500 italic">MINIAMI</h1>
-        <p class="text-slate-500 text-[10px] tracking-[0.8em] uppercase font-black font-mono">Taichung Nantun Node // V14.0 Semantic Engine</p>
+        <p class="text-slate-500 text-[10px] tracking-[0.8em] uppercase font-black font-mono">Taichung Nantun // V18.0 Street Price Engine</p>
     </header>
 
     <main class="max-w-xl mx-auto">
-        <div class="miniami-card p-12 mb-12 rounded-[3.5rem] bg-slate-900/95 glow text-center">
-            <h2 class="text-[11px] font-black text-slate-400 uppercase tracking-widest mb-10">AI 全球價格獲取終端</h2>
+        <div class="miniami-card p-12 mb-12 rounded-[3.5rem] bg-slate-900/95 text-center glow-blue">
+            <h2 class="text-[11px] font-black text-slate-400 uppercase tracking-widest mb-10">AI 全球最低價清算節點</h2>
             <div class="space-y-6">
-                <input type="text" id="itemName" placeholder="試試輸入 Switch 2 或 MacBook M4" 
-                       class="w-full p-7 bg-black border border-slate-800 rounded-[1.5rem] focus:ring-4 focus:ring-blue-500/50 text-white font-black outline-none text-2xl transition-all">
-                <button onclick="runV14()" id="runBtn" class="w-full bg-blue-600 text-white p-7 rounded-[1.5rem] font-black text-3xl hover:bg-blue-500 transition-all shadow-2xl">
-                    執行深度清算
+                <input type="text" id="itemName" placeholder="搜尋 3C 或 精品 (例如: iPhone 17)" 
+                       class="w-full p-7 bg-black border border-slate-800 rounded-[1.5rem] focus:ring-4 focus:ring-blue-500/50 text-white font-black outline-none text-2xl">
+                <button onclick="runV18()" id="runBtn" class="w-full bg-blue-600 text-white p-7 rounded-[1.5rem] font-black text-3xl hover:bg-blue-500 transition-all shadow-2xl">
+                    執行極限清算
                 </button>
             </div>
             <div id="loading" class="hidden mt-12 flex flex-col items-center">
                 <div class="animate-spin rounded-full border-4 border-slate-800 border-t-blue-500 h-16 w-16 mb-6"></div>
-                <span class="text-[10px] font-black text-blue-400 uppercase tracking-widest animate-pulse">正在進行語義推理與利差計算...</span>
+                <span class="text-[10px] font-black text-blue-400 uppercase tracking-widest animate-pulse">正在掃描 MOMO/蝦皮 與 日本市場利差...</span>
             </div>
         </div>
 
-        <div id="resultArea" class="hidden animate-in fade-in duration-700">
-            <div class="miniami-card p-12 bg-slate-900 rounded-[4rem] shadow-2xl text-center">
-                <h3 id="targetName" class="text-3xl font-black text-blue-400 uppercase mb-10 border-b border-slate-800 pb-6"></h3>
-                <div class="space-y-10 mb-16">
+        <div id="resultArea" class="hidden animate-in fade-in zoom-in duration-700">
+            <div id="mainCard" class="miniami-card p-12 bg-slate-900 rounded-[4rem] shadow-2xl text-center">
+                <h3 id="targetName" class="text-3xl font-black text-blue-400 uppercase mb-8 border-b border-slate-800 pb-4"></h3>
+                <div class="space-y-8 mb-16">
                     <div class="flex justify-between items-center text-slate-400 text-sm font-black uppercase">
-                        <span>預估市場定價 (TW)</span>
+                        <span>本地最低參考價</span>
                         <span class="text-3xl text-white" id="twPrice">--</span>
                     </div>
                     <div class="flex justify-between items-center border-t border-slate-800 pt-10">
-                        <span class="text-blue-500 text-sm font-black uppercase tracking-widest">MINIAMI 清算推薦價</span>
+                        <span class="text-blue-500 text-sm font-black uppercase tracking-widest">MINIAMI 清算價</span>
                         <span class="text-7xl text-white font-black" id="finalQuote">--</span>
                     </div>
                 </div>
+                <div class="mb-10 p-6 bg-emerald-900/20 rounded-2xl border border-emerald-800 text-emerald-400 font-bold" id="profitHint"></div>
                 <button onclick="window.open('https://line.me/ti/p/您的LINE')" class="w-full bg-[#06C755] text-white py-8 rounded-[2rem] font-black text-3xl">
-                    向管家索取對帳單
+                    向管家預約面交
                 </button>
             </div>
         </div>
-
-        <div id="debugLog" class="hidden mt-10 p-8 bg-red-900/10 border border-red-900/30 rounded-3xl font-mono text-[10px] text-red-500 whitespace-pre-wrap leading-relaxed"></div>
     </main>
 
     <script>
         const API_KEY = "AIzaSyDPzTU6oeFnpPhN1tYG72-rM3cpws57uAg";
 
-        async function runV14() {
+        async function runV18() {
             const item = document.getElementById('itemName').value;
             if(!item) return;
 
             const btn = document.getElementById('runBtn');
             const loader = document.getElementById('loading');
             const resultArea = document.getElementById('resultArea');
-            const debugLog = document.getElementById('debugLog');
 
             btn.disabled = true;
             loader.classList.remove('hidden');
             resultArea.classList.add('hidden');
-            debugLog.classList.add('hidden');
 
             try {
                 const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${API_KEY}`;
@@ -81,37 +78,42 @@
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({
-                        contents: [{ parts: [{ text: `任務：分析產品「${item}」。
-                        1. 查找 2026 年最新台灣與日本官網價。
-                        2. 若無官方定價，根據現有洩漏資訊或前代價格進行預測推理。
-                        3. 嚴禁回傳空值。
-                        4. 只回傳此 JSON 格式：{"jp":數字, "tw":數字}` }] }]
+                        contents: [{ parts: [{ text: `任務：深度市場掃描「${item}」。
+                        1. 尋找台灣電商(MOMO, PChome, 蝦皮)目前最低促銷價。
+                        2. 尋找日本主要通路(BicCamera, Amazon JP)最低報價。
+                        3. 排除二手價。
+                        4. 若台灣本地價格已是全球最低，請標註。
+                        5. 輸出 JSON: {"jp":數字, "tw":數字, "platform":"來源名稱"}` }] }]
                     })
                 });
 
                 const data = await response.json();
                 const aiText = data.candidates[0].content.parts[0].text;
                 const match = aiText.match(/\{.*\}/s);
-                const prices = JSON.parse(match[0]);
-
-                // 安全渲染邏輯：賦予預設值防止閃退
-                const tw = Number(prices.tw) || 0;
-                const jp = Number(prices.jp) || 0;
-                
-                if (tw === 0 || jp === 0) throw new Error("該品項過於神秘，AI 無法在當前時空建立定價模型。");
+                const result = JSON.parse(match[0]);
 
                 const EX_RATE = 0.2013;
-                const landed = ( (jp / 1.1) * EX_RATE ) * 1.05 + 800;
-                const final = landed + ( (tw - landed) * 0.5 );
+                const landed = ( (result.jp / 1.1) * EX_RATE ) * 1.05 + 800;
+                
+                const tw = Number(result.tw);
+                const profit = (tw - landed) * 0.5;
+                const final = landed + profit;
 
                 document.getElementById('targetName').innerText = item;
                 document.getElementById('twPrice').innerText = `NT$ ${Math.round(tw).toLocaleString()}`;
                 document.getElementById('finalQuote').innerText = `NT$ ${Math.round(final).toLocaleString()}`;
+                
+                if (profit > 0) {
+                    document.getElementById('profitHint').innerText = `💎 已成功壓制電商售價。為您節省 NT$ ${Math.round(profit).toLocaleString()}`;
+                } else {
+                    document.getElementById('profitHint').innerText = `🏠 本地採購優勢。建議直接於 ${result.platform || 'MOMO'} 購買。`;
+                }
+
                 resultArea.classList.remove('hidden');
 
             } catch (err) {
-                debugLog.innerText = `❌ 清算節點回報：\n${err.message}`;
-                debugLog.classList.remove('hidden');
+                console.error(err);
+                alert("數據掃描異常，請稍後再試。");
             } finally {
                 btn.disabled = false;
                 loader.classList.add('hidden');
