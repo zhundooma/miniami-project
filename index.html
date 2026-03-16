@@ -3,11 +3,11 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>MINIAMI | 狙擊手利差清算</title>
+    <title>MINIAMI | 專業狙擊清算節點</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;900&display=swap');
-        body { font-family: 'Inter', sans-serif; background-color: #020617; color: #f8fafc; overflow-x: hidden; }
+        body { font-family: 'Inter', sans-serif; background-color: #020617; color: #f8fafc; }
         .miniami-card { border: 1px solid #1e293b; background: #0f172a; }
         .text-neon { color: #3b82f6; text-shadow: 0 0 15px rgba(59, 130, 246, 0.4); }
         .audit-step { transition: all 0.4s ease; opacity: 0.3; }
@@ -18,33 +18,28 @@
 
     <header class="w-full max-w-4xl text-center mb-16">
         <h1 class="text-8xl font-black mb-4 tracking-tighter italic text-neon">MINIAMI</h1>
-        <p class="text-slate-500 text-[10px] tracking-[0.8em] uppercase font-black">Taichung Nantun // V34.0 Hierarchical Hunter</p>
+        <p class="text-slate-500 text-[10px] tracking-[0.8em] uppercase font-black">Taichung Nantun // V35.0 Coupang Integrated</p>
     </header>
 
     <main class="w-full max-w-xl">
         <div id="authArea" class="hidden mb-12 animate-in fade-in slide-in-from-top-4 duration-700">
             <div class="miniami-card p-10 rounded-[3rem] bg-slate-900/90 text-center border border-blue-500/30">
-                <h3 class="text-[10px] font-black text-blue-400 uppercase tracking-widest mb-6">資產清算授權節點</h3>
-                <input type="password" id="keyInput" placeholder="請輸入 API Key (AIza...)" 
-                       class="w-full p-5 bg-black border border-slate-800 rounded-2xl text-white font-mono text-sm mb-4 outline-none focus:border-blue-500 text-center">
-                <button onclick="saveKey()" class="w-full bg-blue-600 text-white py-4 rounded-2xl font-black text-lg hover:bg-blue-500 transition-all">啟動狙擊引擎</button>
+                <input type="password" id="keyInput" placeholder="請輸入授權碼 (AIza...)" class="w-full p-5 bg-black border border-slate-800 rounded-2xl text-white text-center mb-4 outline-none focus:border-blue-500">
+                <button onclick="saveKey()" class="w-full bg-blue-600 text-white py-4 rounded-2xl font-black">啟動獵人引擎</button>
             </div>
         </div>
 
-        <div id="searchApp" class="miniami-card p-12 mb-12 rounded-[3.5rem] bg-slate-900/95 text-center shadow-[0_0_50px_rgba(59,130,246,0.15)]">
-            <h2 class="text-[11px] font-black text-slate-400 uppercase tracking-widest mb-10">狙擊模式：請提供精確商品型號</h2>
+        <div id="searchApp" class="miniami-card p-12 mb-12 rounded-[3.5rem] bg-slate-900/95 text-center shadow-2xl">
+            <h2 class="text-[11px] font-black text-slate-400 uppercase tracking-widest mb-10">狙擊目標：請輸入完整規格型號</h2>
             <div class="space-y-6">
-                <input type="text" id="itemName" placeholder="例如: iPhone 17 Pro 256G" 
-                       class="w-full p-7 bg-black border border-slate-800 rounded-[1.5rem] focus:ring-4 focus:ring-blue-500/50 text-white font-black outline-none text-2xl transition-all">
-                <button onclick="runHunterV34()" id="runBtn" class="w-full bg-blue-600 text-white p-7 rounded-[1.5rem] font-black text-3xl hover:bg-blue-500 transition-all active:scale-95 shadow-2xl">
-                    啟動階層狙擊
-                </button>
+                <input type="text" id="itemName" placeholder="例如: iPhone 17 Pro Max 256G" class="w-full p-7 bg-black border border-slate-800 rounded-[1.5rem] text-white font-black text-2xl outline-none focus:ring-4 focus:ring-blue-500/30">
+                <button onclick="runHunterV35()" id="runBtn" class="w-full bg-blue-600 text-white p-7 rounded-[1.5rem] font-black text-3xl hover:bg-blue-500 transition-all shadow-xl">執行階層對帳</button>
             </div>
             
             <div id="auditStatus" class="hidden mt-12 space-y-4 text-left border-t border-slate-800 pt-8">
-                <div id="step1" class="audit-step text-[10px] font-black uppercase tracking-[0.15em]">○ 確立官方 MSRP 價格天花板...</div>
-                <div id="step2" class="audit-step text-[10px] font-black uppercase tracking-[0.15em]">○ 依序掃描 MOMO/樂天/PCHOME/蝦皮...</div>
-                <div id="step3" class="audit-step text-[10px] font-black uppercase tracking-[0.15em]">○ 計算跨境落地成本與 50/50 清算...</div>
+                <div id="step1" class="audit-step text-[10px] font-black uppercase tracking-widest">○ 確立官網 MSRP 天花板...</div>
+                <div id="step2" class="audit-step text-[10px] font-black uppercase tracking-widest">○ 掃描 MOMO/樂天/蝦皮/酷澎 (Coupang)...</div>
+                <div id="step3" class="audit-step text-[10px] font-black uppercase tracking-widest">○ 執行 50/50 跨境利差終審...</div>
             </div>
         </div>
 
@@ -52,36 +47,36 @@
             <div class="miniami-card p-12 bg-slate-900 rounded-[4rem] shadow-2xl">
                 <h3 id="targetName" class="text-2xl font-black text-blue-400 uppercase mb-8 border-b border-slate-800 pb-6 text-center"></h3>
                 
-                <div class="mb-12 p-8 bg-slate-800/30 rounded-3xl border border-slate-800">
+                <div class="space-y-10 mb-12">
                     <div class="flex justify-between items-center mb-6">
                         <div class="flex flex-col">
-                            <span class="text-slate-400 text-[10px] font-black uppercase tracking-widest">官方標竿價 (MSRP)</span>
+                            <span class="text-slate-400 text-[10px] font-black">官方標竿價 (MSRP)</span>
                             <span class="text-lg text-slate-500 line-through" id="msrpPrice">--</span>
                         </div>
                         <div class="flex flex-col items-end">
-                            <span class="text-slate-400 text-[10px] font-black uppercase tracking-widest">本地街價 (<span id="sourceLabel" class="text-blue-500">來源</span>)</span>
+                            <span class="text-slate-400 text-[10px] font-black">本地最低價 (<span id="sourceLabel" class="text-blue-500">來源</span>)</span>
                             <span class="text-3xl text-white font-black" id="twPrice">--</span>
                         </div>
                     </div>
-                    <button id="affiliateBtn" class="w-full py-5 bg-orange-600 hover:bg-orange-500 text-white font-black rounded-2xl text-base shadow-lg transition-all">
-                        前往電商來源網頁 (導購)
+                    <button id="affiliateBtn" class="w-full py-5 bg-orange-600 hover:bg-orange-500 text-white font-black rounded-2xl shadow-lg transition-all">
+                        前往來源電商領券 (導購)
                     </button>
                 </div>
 
                 <div class="space-y-6 border-t border-slate-800 pt-10">
                     <div class="flex justify-between items-center">
-                        <span class="text-slate-500 text-xs font-black uppercase tracking-widest">跨境落地原始成本 (未分潤)</span>
+                        <span class="text-slate-500 text-xs font-black uppercase tracking-widest">跨境落地底價 (未分潤)</span>
                         <span class="text-xl text-slate-400 font-mono" id="rawLanded">--</span>
                     </div>
                     <div class="flex justify-between items-center">
-                        <span class="text-blue-500 text-sm font-black uppercase tracking-widest italic">MINIAMI 清算報價</span>
+                        <span class="text-blue-500 text-sm font-black uppercase italic tracking-widest">MINIAMI 清算報價</span>
                         <span class="text-7xl text-white font-black" id="finalQuote">--</span>
                     </div>
                 </div>
 
                 <div id="profitHint" class="mt-10 p-6 bg-blue-900/20 rounded-2xl border border-blue-800 text-blue-400 font-bold text-xs text-center leading-relaxed"></div>
                 
-                <button onclick="window.open('https://line.me/ti/p/您的LINE')" class="w-full mt-10 bg-[#06C755] text-white py-8 rounded-[2rem] font-black text-3xl hover:scale-105 transition-all shadow-2xl">
+                <button onclick="window.open('https://line.me/ti/p/您的LINE')" class="w-full mt-10 bg-[#06C755] text-white py-8 rounded-[2rem] font-black text-3xl shadow-xl hover:scale-105 transition-all">
                     向管家預約面交
                 </button>
             </div>
@@ -92,10 +87,10 @@
 
     <script>
         window.onload = () => { if(!localStorage.getItem('MINIAMI_KEY')) document.getElementById('authArea').classList.remove('hidden'); }
-        function saveKey() { const k = document.getElementById('keyInput').value; if(k.startsWith('AIza')) { localStorage.setItem('MINIAMI_KEY', k); location.reload(); } }
+        function saveKey() { const k = document.getElementById('keyInput').value; if(k) { localStorage.setItem('MINIAMI_KEY', k); location.reload(); } }
         function resetKey() { localStorage.removeItem('MINIAMI_KEY'); location.reload(); }
 
-        async function runHunterV34() {
+        async function runHunterV35() {
             const item = document.getElementById('itemName').value;
             const API_KEY = localStorage.getItem('MINIAMI_KEY');
             if(!item || !API_KEY) return;
@@ -109,76 +104,56 @@
             resultArea.classList.add('hidden');
 
             try {
-                // STEP 1: 官網與街價雙重狙擊
-                updateUI(1, "正在確立官方 MSRP 價格天花板...", "active-step");
+                updateUI(1, "確標官方 MSRP 價格護欄...", "active-step");
                 const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${API_KEY}`;
                 
                 const response = await fetch(url, {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({
-                        contents: [{ parts: [{ text: `任務：作為專業獵人狙擊「${item}」的真實利差。
-                        
-                        【執行程序】
-                        1. 找尋官方網頁 MSRP (建議零售價)。
-                        2. 依序掃描 MOMO、樂天、PChome、蝦皮 找尋低於官網的穩定全新品最低價。
-                        3. 找尋日本(BicCamera, Amazon JP)的含稅日幣價。
-                        4. 嚴禁抓取配件或二手雜訊。
-                        
-                        回傳 JSON：{"msrp":數字, "tw":數字, "jp":數字, "platform":"MOMO或Shopee等"}` }] }]
+                        contents: [{ parts: [{ text: `作為狙擊獵人對帳「${item}」。
+                        【流程】
+                        1. 找尋官網 MSRP。
+                        2. 依序掃描 MOMO、樂天、PChome、蝦皮、酷澎(Coupang) 找尋最低全新品街價。
+                        3. 找尋日本(BicCamera, Amazon JP)最低日幣價。
+                        回傳 JSON：{"msrp":數字, "tw":數字, "jp":數字, "platform":"MOMO/蝦皮/酷澎等"}` }] }]
                     })
                 });
 
                 const data = await response.json();
                 const result = JSON.parse(data.candidates[0].content.parts[0].text.match(/\{.*\}/s)[0]);
 
-                updateUI(2, `已鎖定 ${result.platform} 最低街價...`, "active-step");
-                updateUI(3, "執行 50/50 跨境利差對沖結算...", "active-step");
+                updateUI(2, `已鎖定 ${result.platform} 深度街價...`, "active-step");
+                updateUI(3, "對沖 50/50 跨境利差...", "active-step");
 
-                // 核心計算公式
                 const EX_RATE = 0.2013;
-                // Landed Cost = (JPPrice/1.1 * EX) * 1.05 + 800
                 const rawLanded = ( (result.jp / 1.1) * EX_RATE ) * 1.05 + 800;
-                
-                // Clearing Price = Landed + (TW_Street - Landed) * 0.5
-                let finalQuote;
-                let hint;
-                if (result.tw <= rawLanded) {
-                    finalQuote = result.tw;
-                    hint = "🏠 目前本地電商具備強大採購優勢，建議領券直購。";
-                } else {
-                    const profit = (result.tw - rawLanded) * 0.5;
-                    finalQuote = rawLanded + profit;
-                    hint = `💎 狙擊成功：跨境代購可為您對沖利差 NT$ ${Math.round(profit).toLocaleString()}。`;
-                }
+                let finalQuote = result.tw <= rawLanded ? result.tw : rawLanded + (result.tw - rawLanded) * 0.5;
 
-                // 渲染渲染
                 document.getElementById('targetName').innerText = item;
                 document.getElementById('msrpPrice').innerText = `NT$ ${Math.round(result.msrp).toLocaleString()}`;
                 document.getElementById('twPrice').innerText = `NT$ ${Math.round(result.tw).toLocaleString()}`;
-                document.getElementById('sourceLabel').innerText = result.platform || "台灣電商";
+                document.getElementById('sourceLabel').innerText = result.platform || "市場數據";
                 document.getElementById('rawLanded').innerText = `NT$ ${Math.round(rawLanded).toLocaleString()}`;
                 document.getElementById('finalQuote').innerText = `NT$ ${Math.round(finalQuote).toLocaleString()}`;
-                document.getElementById('profitHint').innerText = hint;
                 
-                // 動態生成搜尋網址
-                const p = result.platform || "momo";
-                let searchUrl = p.toLowerCase().includes('shopee') ? `https://shopee.tw/search?keyword=${encodeURIComponent(item)}` : `https://www.momoshop.com.tw/search/searchShop.jsp?keyword=${encodeURIComponent(item)}`;
-                document.getElementById('affiliateBtn').onclick = () => window.open(searchUrl);
+                // 動態導購
+                const p = (result.platform || "").toLowerCase();
+                let sUrl = `https://www.momoshop.com.tw/search/searchShop.jsp?keyword=${encodeURIComponent(item)}`;
+                if(p.includes('shopee') || p.includes('蝦皮')) sUrl = `https://shopee.tw/search?keyword=${encodeURIComponent(item)}`;
+                else if(p.includes('coupang') || p.includes('酷澎')) sUrl = `https://www.tw.coupang.com/search?q=${encodeURIComponent(item)}`;
+                
+                document.getElementById('affiliateBtn').onclick = () => window.open(sUrl);
+                document.getElementById('profitHint').innerText = result.tw <= rawLanded ? "🏠 本地電商優勢，建議領券直購。" : `💎 狙擊成功：跨境代購對沖利差 NT$ ${Math.round(result.tw - finalQuote).toLocaleString()}。`;
 
                 setTimeout(() => { statusArea.classList.add('hidden'); resultArea.classList.remove('hidden'); }, 800);
-
-            } catch (err) {
-                alert("狙擊節點同步中，請確保提供完整型號。");
-            } finally {
-                btn.disabled = false;
-            }
+            } catch (err) { alert("數據同步中..."); } finally { btn.disabled = false; }
         }
 
         function updateUI(step, text, cls) {
             const el = document.getElementById(`step${step}`);
             el.innerText = `● ${text}`;
-            el.className = `audit-step text-[10px] font-black uppercase tracking-[0.15em] ${cls}`;
+            el.className = `audit-step text-[10px] font-black uppercase tracking-widest ${cls}`;
         }
     </script>
 </body>
