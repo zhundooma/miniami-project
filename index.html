@@ -3,71 +3,78 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>MINIAMI | 專業導購清算終端</title>
+    <title>MINIAMI | 專業導購清算</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;900&display=swap');
         body { font-family: 'Inter', sans-serif; background-color: #020617; color: #f8fafc; }
         .miniami-card { border: 1px solid #1e293b; background: #0f172a; }
-        .text-neon-blue { color: #3b82f6; text-shadow: 0 0 10px rgba(59, 130, 246, 0.5); }
+        .text-neon { color: #3b82f6; text-shadow: 0 0 15px rgba(59, 130, 246, 0.4); }
     </style>
 </head>
 <body class="p-6 md:p-24 min-h-screen flex flex-col items-center">
 
     <header class="text-center mb-16">
-        <h1 class="text-8xl font-black mb-4 tracking-tighter italic text-neon-blue">MINIAMI</h1>
-        <p class="text-slate-500 text-[10px] tracking-[0.8em] uppercase font-black">V30.0 Lead-Gen Engine</p>
+        <h1 class="text-8xl font-black mb-4 tracking-tighter italic text-neon">MINIAMI</h1>
+        <p class="text-slate-500 text-[10px] tracking-[0.8em] uppercase font-black">Taichung Nantun // V32.0 Consensus Engine</p>
     </header>
 
     <main class="w-full max-w-xl">
-        <div class="miniami-card p-12 mb-12 rounded-[3.5rem] text-center shadow-2xl border border-slate-800">
-            <h2 class="text-[11px] font-black text-slate-400 uppercase tracking-widest mb-10">資產利差導購終端</h2>
+        <div class="miniami-card p-12 mb-12 rounded-[3.5rem] shadow-2xl border border-slate-800">
             <div class="space-y-6">
-                <input type="text" id="itemName" placeholder="iPhone, Switch 2, MacBook..." class="w-full p-7 bg-black border border-slate-800 rounded-[1.5rem] text-white font-black text-2xl outline-none focus:border-blue-500 transition-all">
-                <button onclick="runV30()" id="runBtn" class="w-full bg-blue-600 text-white p-7 rounded-[1.5rem] font-black text-3xl hover:bg-blue-500 shadow-lg">開始對帳</button>
+                <input type="text" id="itemName" placeholder="例如: iPhone 17 Pro, Switch 2..." class="w-full p-7 bg-black border border-slate-800 rounded-[1.5rem] text-white font-black text-2xl outline-none focus:border-blue-500 transition-all">
+                <button onclick="runV32()" id="runBtn" class="w-full bg-blue-600 text-white p-7 rounded-[1.5rem] font-black text-3xl hover:bg-blue-500 transition-all shadow-xl">執行市場對帳</button>
+            </div>
+            <div id="loading" class="hidden mt-8 text-center text-[10px] text-blue-400 font-black animate-pulse uppercase tracking-widest">
+                正在排除雜訊並執行市場價格共識審計...
             </div>
         </div>
 
         <div id="resultArea" class="hidden animate-in fade-in zoom-in duration-500">
-            <div class="miniami-card p-12 bg-slate-900 rounded-[4rem] border border-blue-900/50">
-                <h3 id="targetName" class="text-3xl font-black text-blue-400 uppercase mb-8 text-center"></h3>
+            <div class="miniami-card p-12 rounded-[4rem] border border-blue-900/40">
+                <h3 id="targetName" class="text-3xl font-black text-blue-400 mb-8 text-center uppercase"></h3>
                 
                 <div class="mb-12 p-8 bg-slate-800/30 rounded-3xl border border-slate-800">
-                    <div class="flex justify-between items-center mb-4">
-                        <span class="text-slate-400 text-xs font-black uppercase tracking-widest">本地市場最低價</span>
+                    <div class="flex justify-between items-center mb-6">
+                        <span class="text-slate-400 text-xs font-black uppercase tracking-widest">市場共識參考價</span>
                         <span class="text-3xl text-white font-black" id="twPrice">--</span>
                     </div>
-                    <button id="affiliateBtn" class="w-full py-4 bg-orange-600 hover:bg-orange-500 text-white font-black rounded-xl text-sm transition-all shadow-md">
-                        前往電商領券購買 (Affiliate)
+                    <button id="affiliateBtn" class="w-full py-5 bg-orange-600 hover:bg-orange-500 text-white font-black rounded-2xl text-base shadow-lg transition-all">
+                        前往電商來源網頁 (導購分潤)
                     </button>
                 </div>
 
                 <div class="space-y-6 border-t border-slate-800 pt-10">
                     <div class="flex justify-between items-center">
-                        <span class="text-blue-500 text-xs font-black uppercase tracking-widest">跨境落地原始成本 (含運)</span>
-                        <span class="text-xl text-slate-300 font-mono" id="rawLanded">--</span>
+                        <span class="text-slate-500 text-xs font-black uppercase tracking-widest">日本落地原始成本</span>
+                        <span class="text-xl text-slate-400 font-mono" id="rawLanded">--</span>
                     </div>
                     <div class="flex justify-between items-center">
-                        <span class="text-emerald-500 text-sm font-black uppercase tracking-widest italic">MINIAMI 代購報價</span>
+                        <span class="text-blue-500 text-sm font-black uppercase tracking-widest italic">MINIAMI 代購報價</span>
                         <span class="text-6xl text-white font-black" id="finalQuote">--</span>
                     </div>
                 </div>
 
-                <div id="profitHint" class="mt-10 p-6 bg-blue-900/20 rounded-2xl border border-blue-800 text-blue-400 font-bold text-xs text-center"></div>
+                <div id="profitHint" class="mt-10 p-6 bg-blue-900/20 rounded-2xl border border-blue-800 text-blue-400 font-bold text-xs text-center leading-relaxed"></div>
                 
-                <button onclick="window.open('https://line.me/ti/p/您的LINE')" class="w-full mt-8 bg-[#06C755] text-white py-8 rounded-[2rem] font-black text-3xl hover:scale-105 transition-all">向管家預約面交</button>
+                <button onclick="window.open('https://line.me/ti/p/您的LINE')" class="w-full mt-10 bg-[#06C755] text-white py-8 rounded-[2.5rem] font-black text-3xl hover:scale-105 transition-all shadow-2xl">向管家預約面交</button>
             </div>
         </div>
     </main>
 
     <script>
-        async function runV30() {
+        async function runV32() {
             const item = document.getElementById('itemName').value;
             const API_KEY = localStorage.getItem('MINIAMI_KEY');
             if(!item || !API_KEY) return;
 
             const btn = document.getElementById('runBtn');
+            const loader = document.getElementById('loading');
+            const resultArea = document.getElementById('resultArea');
+            
             btn.disabled = true;
+            loader.classList.remove('hidden');
+            resultArea.classList.add('hidden');
 
             try {
                 const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${API_KEY}`;
@@ -76,10 +83,10 @@
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({
-                        contents: [{ parts: [{ text: `任務：對帳「${item}」價格。
-                        1. 搜尋台灣電商(MOMO, 蝦皮)與日本(BicCamera)之穩定全新品售價。
-                        2. 嚴禁抓取低價配件。
-                        3. 回傳 JSON：{"jp":數字, "tw":數字, "platform":"MOMO或Shopee"}` }] }]
+                        contents: [{ parts: [{ text: `任務：對帳「${item}」全新品主機價格。
+                        1. 審計邏輯：搜尋前 5 個台灣搜尋結果。排除顯然是配件或維修的價格。
+                        2. 市場共識：如果大多數賣場報價在 14000 上下，請忽略單一的 10000 報價。
+                        3. 嚴禁幻覺。回傳 JSON：{"jp":數字, "tw":數字, "platform":"MOMO或Shopee"}` }] }]
                     })
                 });
 
@@ -90,24 +97,23 @@
                 const rawLanded = ( (result.jp / 1.1) * EX_RATE ) * 1.05 + 800;
                 let finalQuote = result.tw <= rawLanded ? result.tw : rawLanded + (result.tw - rawLanded) * 0.5;
 
-                // 渲染 UI
                 document.getElementById('targetName').innerText = item;
                 document.getElementById('twPrice').innerText = `NT$ ${Math.round(result.tw).toLocaleString()}`;
                 document.getElementById('rawLanded').innerText = `NT$ ${Math.round(rawLanded).toLocaleString()}`;
                 document.getElementById('finalQuote').innerText = `NT$ ${Math.round(finalQuote).toLocaleString()}`;
                 
-                // 動態導購按鈕 (此處可替換成你的聯盟行銷 ID)
-                const platform = result.platform || "momo";
-                let searchUrl = `https://www.momoshop.com.tw/search/searchShop.jsp?keyword=${encodeURIComponent(item)}`;
-                if(platform.toLowerCase().includes('shopee')) {
-                    searchUrl = `https://shopee.tw/search?keyword=${encodeURIComponent(item)}`;
-                }
+                const searchUrl = result.platform === "Shopee" ? `https://shopee.tw/search?keyword=${encodeURIComponent(item)}` : `https://www.momoshop.com.tw/search/searchShop.jsp?keyword=${encodeURIComponent(item)}`;
                 document.getElementById('affiliateBtn').onclick = () => window.open(searchUrl);
                 
-                document.getElementById('profitHint').innerText = result.tw <= rawLanded ? "目前本地電商具備價格優勢，建議直接購買。" : `清算成功：日本代購可為您節省 NT$ ${Math.round(result.tw - finalQuote).toLocaleString()}。`;
+                document.getElementById('profitHint').innerText = result.tw <= rawLanded ? "目前本地電商具備價格優勢。系統已為您掃描最新街價，建議直接點擊導購連結領券購買。" : `清算成功：日本代購節點可為您對沖利差 NT$ ${Math.round(result.tw - finalQuote).toLocaleString()}。報價已含清關運費。`;
 
-                document.getElementById('resultArea').classList.remove('hidden');
-            } catch (err) { alert("節點讀取中..."); } finally { btn.disabled = false; }
+                resultArea.classList.remove('hidden');
+            } catch (err) {
+                alert("數據同步中，請稍後再試。");
+            } finally {
+                btn.disabled = false;
+                loader.classList.add('hidden');
+            }
         }
     </script>
 </body>
