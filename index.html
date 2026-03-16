@@ -3,54 +3,40 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>MINIAMI | 專業狙擊清算節點</title>
+    <title>MINIAMI | 泛亞資產清算終端</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;900&display=swap');
         body { font-family: 'Inter', sans-serif; background-color: #020617; color: #f8fafc; }
         .miniami-card { border: 1px solid #1e293b; background: #0f172a; }
         .text-neon { color: #3b82f6; text-shadow: 0 0 15px rgba(59, 130, 246, 0.4); }
-        .audit-step { transition: all 0.4s ease; opacity: 0.3; }
-        .active-step { opacity: 1; transform: scale(1.02); color: #3b82f6; }
     </style>
 </head>
 <body class="p-6 md:p-24 min-h-screen flex flex-col items-center">
 
-    <header class="w-full max-w-4xl text-center mb-16">
-        <h1 class="text-8xl font-black mb-4 tracking-tighter italic text-neon">MINIAMI</h1>
-        <p class="text-slate-500 text-[10px] tracking-[0.8em] uppercase font-black">Taichung Nantun // V35.0 Coupang Integrated</p>
+    <header class="text-center mb-16">
+        <h1 class="text-7xl font-black mb-4 tracking-tighter italic text-neon">MINIAMI</h1>
+        <p class="text-slate-500 text-[10px] tracking-[0.8em] uppercase font-black">Taichung Nantun // V36.0 Pan-Asian Network</p>
     </header>
 
     <main class="w-full max-w-xl">
-        <div id="authArea" class="hidden mb-12 animate-in fade-in slide-in-from-top-4 duration-700">
-            <div class="miniami-card p-10 rounded-[3rem] bg-slate-900/90 text-center border border-blue-500/30">
-                <input type="password" id="keyInput" placeholder="請輸入授權碼 (AIza...)" class="w-full p-5 bg-black border border-slate-800 rounded-2xl text-white text-center mb-4 outline-none focus:border-blue-500">
-                <button onclick="saveKey()" class="w-full bg-blue-600 text-white py-4 rounded-2xl font-black">啟動獵人引擎</button>
-            </div>
-        </div>
-
-        <div id="searchApp" class="miniami-card p-12 mb-12 rounded-[3.5rem] bg-slate-900/95 text-center shadow-2xl">
-            <h2 class="text-[11px] font-black text-slate-400 uppercase tracking-widest mb-10">狙擊目標：請輸入完整規格型號</h2>
+        <div class="miniami-card p-12 mb-12 rounded-[3.5rem] shadow-2xl border border-slate-800">
+            <h2 class="text-[11px] font-black text-slate-400 uppercase tracking-widest mb-10 text-center">泛亞多點狙擊：請輸入精確型號</h2>
             <div class="space-y-6">
-                <input type="text" id="itemName" placeholder="例如: iPhone 17 Pro Max 256G" class="w-full p-7 bg-black border border-slate-800 rounded-[1.5rem] text-white font-black text-2xl outline-none focus:ring-4 focus:ring-blue-500/30">
-                <button onclick="runHunterV35()" id="runBtn" class="w-full bg-blue-600 text-white p-7 rounded-[1.5rem] font-black text-3xl hover:bg-blue-500 transition-all shadow-xl">執行階層對帳</button>
+                <input type="text" id="itemName" placeholder="例如: iPhone 17 Pro Max" class="w-full p-7 bg-black border border-slate-800 rounded-[1.5rem] text-white font-black text-2xl outline-none focus:ring-4 focus:ring-blue-500/30">
+                <button onclick="runPanAsianV36()" id="runBtn" class="w-full bg-blue-600 text-white p-7 rounded-[1.5rem] font-black text-3xl hover:bg-blue-500 transition-all">執行泛亞對帳</button>
             </div>
-            
-            <div id="auditStatus" class="hidden mt-12 space-y-4 text-left border-t border-slate-800 pt-8">
-                <div id="step1" class="audit-step text-[10px] font-black uppercase tracking-widest">○ 確立官網 MSRP 天花板...</div>
-                <div id="step2" class="audit-step text-[10px] font-black uppercase tracking-widest">○ 掃描 MOMO/樂天/蝦皮/酷澎 (Coupang)...</div>
-                <div id="step3" class="audit-step text-[10px] font-black uppercase tracking-widest">○ 執行 50/50 跨境利差終審...</div>
-            </div>
+            <div id="loading" class="hidden mt-8 text-center text-[10px] text-blue-400 font-black animate-pulse uppercase tracking-[0.2em]">正在穿透 JP/KR/VN/TH/PH 數據節點...</div>
         </div>
 
-        <div id="resultArea" class="hidden animate-in fade-in zoom-in duration-700">
-            <div class="miniami-card p-12 bg-slate-900 rounded-[4rem] shadow-2xl">
-                <h3 id="targetName" class="text-2xl font-black text-blue-400 uppercase mb-8 border-b border-slate-800 pb-6 text-center"></h3>
+        <div id="resultArea" class="hidden animate-in fade-in zoom-in duration-500">
+            <div class="miniami-card p-12 rounded-[4rem] border border-blue-900/40">
+                <h3 id="targetName" class="text-2xl font-black text-blue-400 mb-8 text-center uppercase"></h3>
                 
-                <div class="space-y-10 mb-12">
+                <div class="mb-10 p-8 bg-slate-800/30 rounded-3xl border border-slate-800">
                     <div class="flex justify-between items-center mb-6">
                         <div class="flex flex-col">
-                            <span class="text-slate-400 text-[10px] font-black">官方標竿價 (MSRP)</span>
+                            <span class="text-slate-400 text-[10px] font-black uppercase">官網基準價</span>
                             <span class="text-lg text-slate-500 line-through" id="msrpPrice">--</span>
                         </div>
                         <div class="flex flex-col items-end">
@@ -58,102 +44,85 @@
                             <span class="text-3xl text-white font-black" id="twPrice">--</span>
                         </div>
                     </div>
-                    <button id="affiliateBtn" class="w-full py-5 bg-orange-600 hover:bg-orange-500 text-white font-black rounded-2xl shadow-lg transition-all">
-                        前往來源電商領券 (導購)
-                    </button>
+                    <button id="affiliateBtn" class="w-full py-5 bg-orange-600 text-white font-black rounded-2xl shadow-lg">前往電商來源 (導購)</button>
                 </div>
 
                 <div class="space-y-6 border-t border-slate-800 pt-10">
                     <div class="flex justify-between items-center">
-                        <span class="text-slate-500 text-xs font-black uppercase tracking-widest">跨境落地底價 (未分潤)</span>
+                        <span class="text-slate-500 text-xs font-black uppercase tracking-widest italic">泛亞最佳落地底價 (<span id="bestCountry" class="text-emerald-400">來源</span>)</span>
                         <span class="text-xl text-slate-400 font-mono" id="rawLanded">--</span>
                     </div>
                     <div class="flex justify-between items-center">
-                        <span class="text-blue-500 text-sm font-black uppercase italic tracking-widest">MINIAMI 清算報價</span>
-                        <span class="text-7xl text-white font-black" id="finalQuote">--</span>
+                        <span class="text-blue-500 text-sm font-black uppercase tracking-widest italic">MINIAMI 清算報價</span>
+                        <span class="text-6xl text-white font-black" id="finalQuote">--</span>
                     </div>
                 </div>
 
                 <div id="profitHint" class="mt-10 p-6 bg-blue-900/20 rounded-2xl border border-blue-800 text-blue-400 font-bold text-xs text-center leading-relaxed"></div>
                 
-                <button onclick="window.open('https://line.me/ti/p/您的LINE')" class="w-full mt-10 bg-[#06C755] text-white py-8 rounded-[2rem] font-black text-3xl shadow-xl hover:scale-105 transition-all">
-                    向管家預約面交
-                </button>
+                <button onclick="window.open('https://line.me/ti/p/您的LINE')" class="w-full mt-10 bg-[#06C755] text-white py-8 rounded-[2rem] font-black text-3xl">預約南屯面交</button>
             </div>
         </div>
-        
-        <button onclick="resetKey()" class="mt-8 text-[9px] text-slate-800 hover:text-red-500 uppercase tracking-widest text-center w-full">註銷授權節點</button>
     </main>
 
     <script>
-        window.onload = () => { if(!localStorage.getItem('MINIAMI_KEY')) document.getElementById('authArea').classList.remove('hidden'); }
-        function saveKey() { const k = document.getElementById('keyInput').value; if(k) { localStorage.setItem('MINIAMI_KEY', k); location.reload(); } }
-        function resetKey() { localStorage.removeItem('MINIAMI_KEY'); location.reload(); }
-
-        async function runHunterV35() {
+        async function runPanAsianV36() {
             const item = document.getElementById('itemName').value;
             const API_KEY = localStorage.getItem('MINIAMI_KEY');
             if(!item || !API_KEY) return;
 
             const btn = document.getElementById('runBtn');
-            const statusArea = document.getElementById('auditStatus');
+            const loader = document.getElementById('loading');
             const resultArea = document.getElementById('resultArea');
             
             btn.disabled = true;
-            statusArea.classList.remove('hidden');
+            loader.classList.remove('hidden');
             resultArea.classList.add('hidden');
 
             try {
-                updateUI(1, "確標官方 MSRP 價格護欄...", "active-step");
                 const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${API_KEY}`;
                 
                 const response = await fetch(url, {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({
-                        contents: [{ parts: [{ text: `作為狙擊獵人對帳「${item}」。
-                        【流程】
-                        1. 找尋官網 MSRP。
-                        2. 依序掃描 MOMO、樂天、PChome、蝦皮、酷澎(Coupang) 找尋最低全新品街價。
-                        3. 找尋日本(BicCamera, Amazon JP)最低日幣價。
-                        回傳 JSON：{"msrp":數字, "tw":數字, "jp":數字, "platform":"MOMO/蝦皮/酷澎等"}` }] }]
+                        contents: [{ parts: [{ text: `任務：作為泛亞獵人狙擊「${item}」價格。
+                        1. 找尋官方 MSRP 定價。
+                        2. 找尋台灣(MOMO/蝦皮/酷澎)最低全新品街價。
+                        3. 深度掃描日本(JPY)、泰國(THB)、越南(VND)、菲律賓(PHP)、韓國(KRW)之當地主流電商最低價。
+                        回傳 JSON：{"msrp":數字, "tw":數字, "platform":"台灣來源", "prices":{"jp":數字, "kr":數字, "th":數字, "vn":數字, "ph":數字}}` }] }]
                     })
                 });
 
                 const data = await response.json();
                 const result = JSON.parse(data.candidates[0].content.parts[0].text.match(/\{.*\}/s)[0]);
 
-                updateUI(2, `已鎖定 ${result.platform} 深度街價...`, "active-step");
-                updateUI(3, "對沖 50/50 跨境利差...", "active-step");
+                // 泛亞對沖矩陣計算
+                const matrix = [
+                    { country: "日本", cost: ( (result.prices.jp / 1.1) * 0.2013 ) * 1.05 + 800 },
+                    { country: "韓國", cost: (result.prices.kr * 0.0245) * 1.05 + 1000 },
+                    { country: "泰國", cost: (result.prices.th * 0.91) * 1.05 + 1200 },
+                    { country: "越南", cost: (result.prices.vn * 0.0013) * 1.05 + 1500 },
+                    { country: "菲律賓", cost: (result.prices.ph * 0.58) * 1.05 + 1500 }
+                ];
 
-                const EX_RATE = 0.2013;
-                const rawLanded = ( (result.jp / 1.1) * EX_RATE ) * 1.05 + 800;
-                let finalQuote = result.tw <= rawLanded ? result.tw : rawLanded + (result.tw - rawLanded) * 0.5;
+                // 挑選成本最低的國家
+                const best = matrix.reduce((prev, curr) => (prev.cost < curr.cost) ? prev : curr);
+                
+                let finalQuote = result.tw <= best.cost ? result.tw : best.cost + (result.tw - best.cost) * 0.5;
 
                 document.getElementById('targetName').innerText = item;
                 document.getElementById('msrpPrice').innerText = `NT$ ${Math.round(result.msrp).toLocaleString()}`;
                 document.getElementById('twPrice').innerText = `NT$ ${Math.round(result.tw).toLocaleString()}`;
-                document.getElementById('sourceLabel').innerText = result.platform || "市場數據";
-                document.getElementById('rawLanded').innerText = `NT$ ${Math.round(rawLanded).toLocaleString()}`;
+                document.getElementById('sourceLabel').innerText = result.platform;
+                document.getElementById('bestCountry').innerText = best.country;
+                document.getElementById('rawLanded').innerText = `NT$ ${Math.round(best.cost).toLocaleString()}`;
                 document.getElementById('finalQuote').innerText = `NT$ ${Math.round(finalQuote).toLocaleString()}`;
                 
-                // 動態導購
-                const p = (result.platform || "").toLowerCase();
-                let sUrl = `https://www.momoshop.com.tw/search/searchShop.jsp?keyword=${encodeURIComponent(item)}`;
-                if(p.includes('shopee') || p.includes('蝦皮')) sUrl = `https://shopee.tw/search?keyword=${encodeURIComponent(item)}`;
-                else if(p.includes('coupang') || p.includes('酷澎')) sUrl = `https://www.tw.coupang.com/search?q=${encodeURIComponent(item)}`;
-                
-                document.getElementById('affiliateBtn').onclick = () => window.open(sUrl);
-                document.getElementById('profitHint').innerText = result.tw <= rawLanded ? "🏠 本地電商優勢，建議領券直購。" : `💎 狙擊成功：跨境代購對沖利差 NT$ ${Math.round(result.tw - finalQuote).toLocaleString()}。`;
+                document.getElementById('profitHint').innerText = result.tw <= best.cost ? "🏠 泛亞掃描完成：本地電商具備最強優勢。" : `💎 泛亞對沖成功：透過 ${best.country} 節點可為您節省 NT$ ${Math.round(result.tw - finalQuote).toLocaleString()}。`;
 
-                setTimeout(() => { statusArea.classList.add('hidden'); resultArea.classList.remove('hidden'); }, 800);
-            } catch (err) { alert("數據同步中..."); } finally { btn.disabled = false; }
-        }
-
-        function updateUI(step, text, cls) {
-            const el = document.getElementById(`step${step}`);
-            el.innerText = `● ${text}`;
-            el.className = `audit-step text-[10px] font-black uppercase tracking-widest ${cls}`;
+                resultArea.classList.remove('hidden');
+            } catch (err) { alert("節點數據超載，請重新狙擊。"); } finally { btn.disabled = false; loader.classList.add('hidden'); }
         }
     </script>
 </body>
