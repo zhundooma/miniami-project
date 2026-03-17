@@ -1,49 +1,150 @@
-// ... UI 部分保持 V39.0 的高級感，我們重點更新 runHunterV40 ...
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MINIAMI | 專業資產清算終端</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;900&display=swap');
+        body { font-family: 'Inter', sans-serif; background-color: #020617; color: #f8fafc; }
+        .miniami-card { border: 1px solid #1e293b; background: #0f172a; }
+        .audit-step { transition: all 0.3s ease; opacity: 0.2; font-size: 10px; font-weight: 900; }
+        .active-step { opacity: 1; color: #3b82f6; transform: translateX(5px); }
+        .highlight-glow { box-shadow: 0 0 20px rgba(59, 130, 246, 0.2); border: 1px solid #3b82f6; }
+    </style>
+</head>
+<body class="p-6 md:p-24 min-h-screen flex flex-col items-center">
 
-async function runHunterV40() {
-    const item = document.getElementById('itemName').value;
-    const API_KEY = localStorage.getItem('MINIAMI_KEY');
-    if(!item || !API_KEY) return;
+    <header class="text-center mb-16">
+        <h1 class="text-8xl font-black mb-4 tracking-tighter italic text-blue-500 uppercase">MINIAMI</h1>
+        <p class="text-slate-500 text-[10px] tracking-[0.8em] uppercase font-black">Taichung Nantun // V42.0 Hierarchy Hunter</p>
+    </header>
 
-    // ... 啟動加載動畫 ...
+    <main class="w-full max-w-xl">
+        <div id="authArea" class="hidden mb-12 animate-pulse">
+            <div class="miniami-card p-8 rounded-[2.5rem] text-center border border-blue-500/50">
+                <input type="password" id="keyInput" placeholder="輸入 API Key (AIza...)" class="w-full p-4 bg-black border border-slate-800 rounded-xl text-white text-center mb-4 outline-none">
+                <button onclick="saveKey()" class="w-full bg-blue-600 text-white py-4 rounded-xl font-black">啟動節點</button>
+            </div>
+        </div>
 
-    try {
-        const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${API_KEY}`;
-        
-        // V40.0 指令：強制執行五階層審計
-        const response = await fetch(url, {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({
-                contents: [{ parts: [{ text: `你現在是 Richard 的專業獵人。任務：狙擊「${item}」在台灣的真實街價。
+        <div class="miniami-card p-12 mb-12 rounded-[3.5rem] shadow-2xl border border-slate-800">
+            <div class="space-y-6">
+                <input type="text" id="itemName" placeholder="輸入完整型號 (如: iPhone 17 Pro)" 
+                       class="w-full p-7 bg-black border border-slate-800 rounded-[1.5rem] text-white font-black text-2xl outline-none focus:ring-2 focus:ring-blue-500 transition-all">
+                <button onclick="runV42()" id="runBtn" class="w-full bg-blue-600 text-white p-7 rounded-[1.5rem] font-black text-3xl hover:bg-blue-500 transition-all shadow-xl">執行階層對帳</button>
+            </div>
+            
+            <div id="statusList" class="hidden mt-10 space-y-3 border-t border-slate-800 pt-8">
+                <div id="s1" class="audit-step tracking-widest uppercase">1. 確立品牌官網 MSRP</div>
+                <div id="s2" class="audit-step tracking-widest uppercase">2. 掃描在地零售 (家樂福/Costco)</div>
+                <div id="s3" class="audit-step tracking-widest uppercase">3. 掃描產業通路 (地標/Game休閒/三井)</div>
+                <div id="s4" class="audit-step tracking-widest uppercase">4. 掃描電商平台 (MOMO/酷澎/friday/蝦皮)</div>
+            </div>
+        </div>
+
+        <div id="resultArea" class="hidden animate-in fade-in zoom-in duration-500">
+            <div class="miniami-card p-12 rounded-[4rem] highlight-glow">
+                <h3 id="targetName" class="text-3xl font-black text-blue-400 mb-8 text-center border-b border-slate-800 pb-6 uppercase"></h3>
                 
-                【審計流程】
-                1. 官網價：先找 Apple/Sony/Samsung 等官網定價作為天花板。
-                2. 地標價：搜尋「地標網通」或「手機王」的當日報價作為「真實地板價」。
-                3. 電商價：掃描 Coupang、MOMO、蝦皮商城。
-                4. 雜訊過濾：嚴禁抓取低於「真實地板價」80% 的價格（那是配件或分期）。
+                <div class="space-y-12">
+                    <div class="flex justify-between items-end">
+                        <div class="flex flex-col">
+                            <span class="text-slate-500 text-[10px] font-black uppercase tracking-widest">官方基準 (MSRP)</span>
+                            <span class="text-2xl text-slate-400 line-through" id="msrpPrice">--</span>
+                        </div>
+                        <div class="flex flex-col items-end">
+                            <span class="text-blue-500 text-[10px] font-black uppercase tracking-widest">獵人狙擊最低價 (<span id="sourceLabel">--</span>)</span>
+                            <span class="text-6xl text-white font-black" id="twPrice">--</span>
+                        </div>
+                    </div>
+
+                    <div class="space-y-4">
+                        <button id="affiliateBtn" class="w-full py-8 bg-orange-600 hover:bg-orange-500 text-white font-black rounded-[2rem] text-3xl shadow-2xl transition-all transform hover:scale-[1.02]">
+                            領取限時優惠購買
+                        </button>
+                        <p class="text-center text-[10px] text-slate-500 font-black uppercase tracking-tighter">
+                            * 已過濾鬼單與配件雜訊，請放心點擊
+                        </p>
+                    </div>
+
+                    <button onclick="window.open('https://line.me/ti/p/您的LINE')" class="w-full bg-[#06C755] text-white py-6 rounded-3xl font-black text-xl hover:opacity-90 transition-all">
+                        聯絡南屯管家預約面交
+                    </button>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <script>
+        window.onload = () => { if(!localStorage.getItem('MINIAMI_KEY')) document.getElementById('authArea').classList.remove('hidden'); }
+        function saveKey() { const k = document.getElementById('keyInput').value; if(k) { localStorage.setItem('MINIAMI_KEY', k); location.reload(); } }
+
+        async function runV42() {
+            const item = document.getElementById('itemName').value;
+            const API_KEY = localStorage.getItem('MINIAMI_KEY');
+            if(!item || !API_KEY) return;
+
+            const btn = document.getElementById('runBtn');
+            const status = document.getElementById('statusList');
+            const resultArea = document.getElementById('resultArea');
+            
+            btn.disabled = true;
+            status.classList.remove('hidden');
+            resultArea.classList.add('hidden');
+
+            try {
+                // 模擬階層掃描感
+                updateStep(1); 
+                const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${API_KEY}`;
                 
-                請只回傳 JSON：{"msrp":數字, "floor":數字, "coupang":數字, "momo":數字, "shopee":數字, "best_platform":"名稱"}` }] }]
-            })
-        });
+                const response = await fetch(url, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        contents: [{ parts: [{ text: `你現在是 Dennis 的專業獵人引擎。狙擊「${item}」。
+                        請嚴格執行順序：1.品牌官網 2.在地零售(家樂福/Costco) 3.在地產業(地標/GAME休閒館/三井/小北) 4.電商平台(Friday/蝦皮商城/MOMO/酷澎/PCHOME)。
+                        注意：排除任何低於官網定價 30% 的配件。
+                        回傳 JSON：{"msrp":數字, "price":數字, "platform":"來源名稱", "type":"Retail/Industry/Ecom"}` }] }]
+                    })
+                });
 
-        const data = await response.json();
-        const result = JSON.parse(data.candidates[0].content.parts[0].text.match(/\{.*\}/s)[0]);
+                updateStep(2); setTimeout(() => updateStep(3), 500); setTimeout(() => updateStep(4), 1000);
 
-                // 以地標/商城價作為最終「本地街價」
-        const twStreetPrice = result.floor || result.momo;
+                const data = await response.json();
+                const result = JSON.parse(data.candidates[0].content.parts[0].text.match(/\{.*\}/s)[0]);
 
-        document.getElementById('targetName').innerText = item;
-        document.getElementById('msrpPrice').innerText = `NT$ ${Math.round(result.msrp).toLocaleString()}`;
-        document.getElementById('twPrice').innerText = `NT$ ${Math.round(twStreetPrice).toLocaleString()}`;
-        document.getElementById('sourceLabel').innerText = result.best_platform;
-        
-        // 渲染導購連結 (依據抓到的平台自動變換)
-        let sUrl = `https://www.tw.coupang.com/search?q=${encodeURIComponent(item)}`;
-        if(result.best_platform.includes('MOMO')) sUrl = `https://www.momoshop.com.tw/search/searchShop.jsp?keyword=${encodeURIComponent(item)}`;
-        
-        document.getElementById('affiliateBtn').onclick = () => window.open(sUrl);
-        document.getElementById('resultArea').classList.remove('hidden');
+                document.getElementById('targetName').innerText = item;
+                document.getElementById('msrpPrice').innerText = `NT$ ${Math.round(result.msrp).toLocaleString()}`;
+                document.getElementById('twPrice').innerText = `NT$ ${Math.round(result.price).toLocaleString()}`;
+                document.getElementById('sourceLabel').innerText = result.platform;
+                
+                // 動態導購鏈接生成 (Dennis 可於此處更換為自己的聯盟行銷 ID)
+                let sUrl = `https://www.momoshop.com.tw/search/searchShop.jsp?keyword=${encodeURIComponent(item)}`;
+                const p = result.platform.toLowerCase();
+                if(p.includes('shopee')) sUrl = `https://shopee.tw/search?keyword=${encodeURIComponent(item)}`;
+                else if(p.includes('coupang')) sUrl = `https://www.tw.coupang.com/search?q=${encodeURIComponent(item)}`;
+                else if(p.includes('friday')) sUrl = `https://shopping.friday.tw/ec2/search?search_keyword=${encodeURIComponent(item)}`;
+                
+                document.getElementById('affiliateBtn').onclick = () => window.open(sUrl);
 
-    } catch (err) { alert("獵人節點同步中，請確保型號完整。"); }
-}
+                setTimeout(() => {
+                    status.classList.add('hidden');
+                    resultArea.classList.remove('hidden');
+                    resetSteps();
+                }, 1500);
+
+            } catch (err) { alert("數據狙擊失敗，請嘗試更精確的型號。"); } finally { btn.disabled = false; }
+        }
+
+        function updateStep(step) {
+            document.querySelectorAll('.audit-step').forEach(el => el.classList.remove('active-step'));
+            document.getElementById(`s${step}`).classList.add('active-step');
+        }
+        function resetSteps() {
+            document.querySelectorAll('.audit-step').forEach(el => el.classList.remove('active-step'));
+        }
+    </script>
+</body>
+</html>
