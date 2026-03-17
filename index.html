@@ -7,81 +7,92 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;900&display=swap');
-        body { font-family: 'Inter', sans-serif; background-color: #020617; color: #f8fafc; }
+        body { font-family: 'Inter', sans-serif; background-color: #020617; color: #f8fafc; overflow-x: hidden; }
         .miniami-card { border: 1px solid #1e293b; background: #0f172a; }
-        .audit-step { transition: all 0.3s ease; opacity: 0.2; font-size: 10px; font-weight: 900; }
+        .audit-step { transition: all 0.3s ease; opacity: 0.1; font-size: 10px; font-weight: 900; }
         .active-step { opacity: 1; color: #3b82f6; transform: translateX(5px); }
-        .highlight-glow { box-shadow: 0 0 20px rgba(59, 130, 246, 0.2); border: 1px solid #3b82f6; }
+        .highlight-glow { box-shadow: 0 0 30px rgba(59, 130, 246, 0.15); border: 1px solid #3b82f6; }
+        .loading-progress { height: 2px; background: #3b82f6; width: 0%; transition: width 0.4s ease; }
     </style>
 </head>
 <body class="p-6 md:p-24 min-h-screen flex flex-col items-center">
 
     <header class="text-center mb-16">
         <h1 class="text-8xl font-black mb-4 tracking-tighter italic text-blue-500 uppercase">MINIAMI</h1>
-        <p class="text-slate-500 text-[10px] tracking-[0.8em] uppercase font-black">Taichung Nantun // V42.0 Hierarchy Hunter</p>
+        <p class="text-slate-500 text-[10px] tracking-[0.8em] uppercase font-black">Taichung Nantun // V43.0 Precision Hunter</p>
     </header>
 
     <main class="w-full max-w-xl">
-        <div id="authArea" class="hidden mb-12 animate-pulse">
-            <div class="miniami-card p-8 rounded-[2.5rem] text-center border border-blue-500/50">
-                <input type="password" id="keyInput" placeholder="輸入 API Key (AIza...)" class="w-full p-4 bg-black border border-slate-800 rounded-xl text-white text-center mb-4 outline-none">
-                <button onclick="saveKey()" class="w-full bg-blue-600 text-white py-4 rounded-xl font-black">啟動節點</button>
+        <div id="authArea" class="hidden mb-12">
+            <div class="miniami-card p-10 rounded-[3rem] text-center border border-blue-500/30">
+                <h3 class="text-xs font-black text-blue-400 uppercase mb-6 tracking-widest">系統尚未授權</h3>
+                <input type="password" id="keyInput" placeholder="請貼上 API Key (AIza...)" 
+                       class="w-full p-5 bg-black border border-slate-800 rounded-2xl text-white text-center mb-4 outline-none">
+                <button onclick="saveKey()" class="w-full bg-blue-600 text-white py-5 rounded-2xl font-black hover:bg-blue-500">啟動狙擊引擎</button>
             </div>
         </div>
 
-        <div class="miniami-card p-12 mb-12 rounded-[3.5rem] shadow-2xl border border-slate-800">
+        <div class="miniami-card p-12 mb-12 rounded-[3.5rem] shadow-2xl">
             <div class="space-y-6">
-                <input type="text" id="itemName" placeholder="輸入完整型號 (如: iPhone 17 Pro)" 
-                       class="w-full p-7 bg-black border border-slate-800 rounded-[1.5rem] text-white font-black text-2xl outline-none focus:ring-2 focus:ring-blue-500 transition-all">
-                <button onclick="runV42()" id="runBtn" class="w-full bg-blue-600 text-white p-7 rounded-[1.5rem] font-black text-3xl hover:bg-blue-500 transition-all shadow-xl">執行階層對帳</button>
+                <input type="text" id="itemName" placeholder="例如: 威猛先生 水管疏通膠 800g" 
+                       class="w-full p-8 bg-black border border-slate-800 rounded-[1.8rem] text-white font-black text-2xl outline-none focus:ring-2 focus:ring-blue-500 transition-all">
+                <button onclick="runV43()" id="runBtn" class="w-full bg-blue-600 text-white p-8 rounded-[1.8rem] font-black text-3xl hover:bg-blue-500 shadow-xl transition-all active:scale-95">
+                    執行階層對帳
+                </button>
             </div>
             
-            <div id="statusList" class="hidden mt-10 space-y-3 border-t border-slate-800 pt-8">
-                <div id="s1" class="audit-step tracking-widest uppercase">1. 確立品牌官網 MSRP</div>
-                <div id="s2" class="audit-step tracking-widest uppercase">2. 掃描在地零售 (家樂福/Costco)</div>
-                <div id="s3" class="audit-step tracking-widest uppercase">3. 掃描產業通路 (地標/Game休閒/三井)</div>
-                <div id="s4" class="audit-step tracking-widest uppercase">4. 掃描電商平台 (MOMO/酷澎/friday/蝦皮)</div>
+            <div id="statusList" class="hidden mt-12 space-y-4 border-t border-slate-800 pt-10">
+                <div id="s1" class="audit-step tracking-widest uppercase">○ 1. 確立官方 MSRP 定價天花板</div>
+                <div id="s2" class="audit-step tracking-widest uppercase">○ 2. 掃描在地零售 (家樂福/Costco)</div>
+                <div id="s3" class="audit-step tracking-widest uppercase">○ 3. 掃描產業通路 (地標/Game/三井)</div>
+                <div id="s4" class="audit-step tracking-widest uppercase">○ 4. 掃描電商平台 (MOMO/酷澎/Friday)</div>
+                <div class="w-full bg-slate-800 h-0.5 mt-4 rounded-full overflow-hidden">
+                    <div id="progressBar" class="loading-progress"></div>
+                </div>
             </div>
         </div>
 
-        <div id="resultArea" class="hidden animate-in fade-in zoom-in duration-500">
-            <div class="miniami-card p-12 rounded-[4rem] highlight-glow">
-                <h3 id="targetName" class="text-3xl font-black text-blue-400 mb-8 text-center border-b border-slate-800 pb-6 uppercase"></h3>
+        <div id="resultArea" class="hidden animate-in fade-in zoom-in duration-700">
+            <div class="miniami-card p-12 rounded-[4.5rem] highlight-glow">
+                <h3 id="targetName" class="text-3xl font-black text-blue-400 mb-10 text-center border-b border-slate-800 pb-8 uppercase"></h3>
                 
                 <div class="space-y-12">
                     <div class="flex justify-between items-end">
                         <div class="flex flex-col">
-                            <span class="text-slate-500 text-[10px] font-black uppercase tracking-widest">官方基準 (MSRP)</span>
-                            <span class="text-2xl text-slate-400 line-through" id="msrpPrice">--</span>
+                            <span class="text-slate-500 text-[10px] font-black uppercase tracking-widest mb-2">官方基準 (MSRP)</span>
+                            <span class="text-2xl text-slate-500 line-through font-mono" id="msrpPrice">--</span>
                         </div>
                         <div class="flex flex-col items-end">
-                            <span class="text-blue-500 text-[10px] font-black uppercase tracking-widest">獵人狙擊最低價 (<span id="sourceLabel">--</span>)</span>
-                            <span class="text-6xl text-white font-black" id="twPrice">--</span>
+                            <span class="text-blue-500 text-[10px] font-black uppercase tracking-widest mb-2">獵人最佳報價 (<span id="sourceLabel">--</span>)</span>
+                            <span class="text-7xl text-white font-black" id="twPrice">--</span>
                         </div>
                     </div>
 
-                    <div class="space-y-4">
-                        <button id="affiliateBtn" class="w-full py-8 bg-orange-600 hover:bg-orange-500 text-white font-black rounded-[2rem] text-3xl shadow-2xl transition-all transform hover:scale-[1.02]">
-                            領取限時優惠購買
+                    <div class="space-y-6">
+                        <button id="affiliateBtn" class="w-full py-9 bg-orange-600 hover:bg-orange-500 text-white font-black rounded-[2.5rem] text-4xl shadow-2xl transition-all">
+                            領取限時優惠
                         </button>
-                        <p class="text-center text-[10px] text-slate-500 font-black uppercase tracking-tighter">
-                            * 已過濾鬼單與配件雜訊，請放心點擊
+                        <p class="text-center text-[10px] text-slate-600 font-black uppercase tracking-tighter italic">
+                            * 已強制排除組合包拆分單價，確保數據與頁面一致
                         </p>
                     </div>
 
-                    <button onclick="window.open('https://line.me/ti/p/您的LINE')" class="w-full bg-[#06C755] text-white py-6 rounded-3xl font-black text-xl hover:opacity-90 transition-all">
-                        聯絡南屯管家預約面交
+                    <button onclick="window.open('https://line.me/ti/p/您的LINE')" class="w-full bg-[#06C755] text-white py-6 rounded-3xl font-black text-xl hover:opacity-90">
+                        預約南屯門市面交
                     </button>
                 </div>
             </div>
         </div>
+        
+        <button onclick="resetKey()" class="mt-12 text-[9px] text-slate-800 hover:text-red-500 uppercase tracking-[0.4em] text-center w-full">註銷授權節點</button>
     </main>
 
     <script>
         window.onload = () => { if(!localStorage.getItem('MINIAMI_KEY')) document.getElementById('authArea').classList.remove('hidden'); }
         function saveKey() { const k = document.getElementById('keyInput').value; if(k) { localStorage.setItem('MINIAMI_KEY', k); location.reload(); } }
+        function resetKey() { localStorage.removeItem('MINIAMI_KEY'); location.reload(); }
 
-        async function runV42() {
+        async function runV43() {
             const item = document.getElementById('itemName').value;
             const API_KEY = localStorage.getItem('MINIAMI_KEY');
             if(!item || !API_KEY) return;
@@ -89,13 +100,14 @@
             const btn = document.getElementById('runBtn');
             const status = document.getElementById('statusList');
             const resultArea = document.getElementById('resultArea');
+            const bar = document.getElementById('progressBar');
             
             btn.disabled = true;
             status.classList.remove('hidden');
             resultArea.classList.add('hidden');
+            bar.style.width = '20%';
 
             try {
-                // 模擬階層掃描感
                 updateStep(1); 
                 const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${API_KEY}`;
                 
@@ -103,24 +115,30 @@
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({
-                        contents: [{ parts: [{ text: `你現在是 Dennis 的專業獵人引擎。狙擊「${item}」。
-                        請嚴格執行順序：1.品牌官網 2.在地零售(家樂福/Costco) 3.在地產業(地標/GAME休閒館/三井/小北) 4.電商平台(Friday/蝦皮商城/MOMO/酷澎/PCHOME)。
-                        注意：排除任何低於官網定價 30% 的配件。
-                        回傳 JSON：{"msrp":數字, "price":數字, "platform":"來源名稱", "type":"Retail/Industry/Ecom"}` }] }]
+                        contents: [{ parts: [{ text: `你現在是 Dennis 的專業獵人引擎。任務：狙擊「${item}」的真實街價。
+                        
+                        【嚴格審計邏輯】
+                        1. 執行階層：1.官方定價 2.零售(家樂福/Costco) 3.產業通路(地標/Game/三井/小北) 4.電商(Friday/MOMO/酷澎/蝦皮商城)。
+                        2. 單位鎖定：如果搜尋結果是組合包(如4入、6入)，嚴禁自行計算單價回報。必須回報「單件裝商品」在頁面上直接結帳的最低總價。
+                        3. 排除雜訊：排除低於官方標價 40% 的配件、二手品。
+                        
+                        回傳 JSON：{"msrp":數字, "price":數字, "platform":"名稱", "desc":"說明"}` }] }]
                     })
                 });
 
-                updateStep(2); setTimeout(() => updateStep(3), 500); setTimeout(() => updateStep(4), 1000);
+                bar.style.width = '60%';
+                updateStep(2); setTimeout(() => updateStep(3), 400); setTimeout(() => updateStep(4), 800);
 
                 const data = await response.json();
-                const result = JSON.parse(data.candidates[0].content.parts[0].text.match(/\{.*\}/s)[0]);
+                const text = data.candidates[0].content.parts[0].text;
+                const result = JSON.parse(text.match(/\{.*\}/s)[0]);
 
                 document.getElementById('targetName').innerText = item;
                 document.getElementById('msrpPrice').innerText = `NT$ ${Math.round(result.msrp).toLocaleString()}`;
                 document.getElementById('twPrice').innerText = `NT$ ${Math.round(result.price).toLocaleString()}`;
                 document.getElementById('sourceLabel').innerText = result.platform;
                 
-                // 動態導購鏈接生成 (Dennis 可於此處更換為自己的聯盟行銷 ID)
+                // 動態導購
                 let sUrl = `https://www.momoshop.com.tw/search/searchShop.jsp?keyword=${encodeURIComponent(item)}`;
                 const p = result.platform.toLowerCase();
                 if(p.includes('shopee')) sUrl = `https://shopee.tw/search?keyword=${encodeURIComponent(item)}`;
@@ -129,13 +147,15 @@
                 
                 document.getElementById('affiliateBtn').onclick = () => window.open(sUrl);
 
+                bar.style.width = '100%';
                 setTimeout(() => {
                     status.classList.add('hidden');
                     resultArea.classList.remove('hidden');
                     resetSteps();
-                }, 1500);
+                    bar.style.width = '0%';
+                }, 1200);
 
-            } catch (err) { alert("數據狙擊失敗，請嘗試更精確的型號。"); } finally { btn.disabled = false; }
+            } catch (err) { alert("數據節點異常，請稍後再試。"); } finally { btn.disabled = false; }
         }
 
         function updateStep(step) {
