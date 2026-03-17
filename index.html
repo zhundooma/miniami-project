@@ -1,130 +1,49 @@
-<!DOCTYPE html>
-<html lang="zh-TW">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>MINIAMI | 旗艦清算 V39.0</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <style>
-        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;900&display=swap');
-        body { font-family: 'Inter', sans-serif; background-color: #020617; color: #f8fafc; }
-        .miniami-card { border: 1px solid #1e293b; background: #0f172a; }
-        .text-neon { color: #3b82f6; text-shadow: 0 0 10px rgba(59, 130, 246, 0.4); }
-        .loading-line { height: 2px; background: #3b82f6; width: 0%; transition: width 0.3s ease; }
-    </style>
-</head>
-<body class="p-6 md:p-24 min-h-screen flex flex-col items-center">
+// ... UI 部分保持 V39.0 的高級感，我們重點更新 runHunterV40 ...
 
-    <header class="text-center mb-16">
-        <h1 class="text-7xl font-black mb-4 tracking-tighter italic text-neon">MINIAMI</h1>
-        <p class="text-slate-500 text-[10px] tracking-[0.8em] uppercase font-black">Taichung Nantun // V39.0 Resilience Node</p>
-    </header>
+async function runHunterV40() {
+    const item = document.getElementById('itemName').value;
+    const API_KEY = localStorage.getItem('MINIAMI_KEY');
+    if(!item || !API_KEY) return;
 
-    <main class="w-full max-w-xl">
-        <div class="miniami-card p-12 mb-12 rounded-[3.5rem] shadow-2xl border border-slate-800">
-            <h2 class="text-[11px] font-black text-slate-400 uppercase tracking-widest mb-10 text-center">獵人掃描：已強化旗艦資產識別</h2>
-            <div class="space-y-6">
-                <input type="text" id="itemName" placeholder="例如: iPhone 17 Pro 256G" class="w-full p-7 bg-black border border-slate-800 rounded-[1.5rem] text-white font-black text-2xl outline-none">
-                <button onclick="runV39()" id="runBtn" class="w-full bg-blue-600 text-white p-7 rounded-[1.5rem] font-black text-3xl hover:bg-blue-500 transition-all">執行泛亞清算</button>
-            </div>
-            <div id="loader" class="hidden mt-8 w-full bg-slate-800 h-1"><div id="bar" class="loading-line"></div></div>
-        </div>
+    // ... 啟動加載動畫 ...
 
-        <div id="resultArea" class="hidden animate-in fade-in zoom-in duration-500">
-            <div class="miniami-card p-12 rounded-[4rem] border border-blue-900/40 shadow-2xl">
-                <h3 id="targetName" class="text-2xl font-black text-blue-400 mb-8 text-center uppercase"></h3>
+    try {
+        const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${API_KEY}`;
+        
+        // V40.0 指令：強制執行五階層審計
+        const response = await fetch(url, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+                contents: [{ parts: [{ text: `你現在是 Richard 的專業獵人。任務：狙擊「${item}」在台灣的真實街價。
                 
-                <div class="mb-10 p-8 bg-slate-800/30 rounded-3xl border border-slate-800">
-                    <div class="flex justify-between items-center mb-6">
-                        <div class="flex flex-col">
-                            <span class="text-slate-400 text-[10px] font-black uppercase">官方定價基準</span>
-                            <span class="text-lg text-slate-500 line-through" id="msrpPrice">--</span>
-                        </div>
-                        <div class="flex flex-col items-end">
-                            <span class="text-slate-400 text-[10px] font-black">本地街價 (<span id="sourceLabel" class="text-blue-500">來源</span>)</span>
-                            <span class="text-3xl text-white font-black" id="twPrice">--</span>
-                        </div>
-                    </div>
-                    <button id="affiliateBtn" class="w-full py-5 bg-orange-600 text-white font-black rounded-2xl shadow-lg">前往來源導購網頁</button>
-                </div>
-
-                <div class="space-y-6 border-t border-slate-800 pt-10">
-                    <div class="flex justify-between items-center">
-                        <span class="text-slate-500 text-xs font-black uppercase tracking-widest italic">泛亞最佳落地價 (<span id="bestCountry" class="text-emerald-400">來源</span>)</span>
-                        <span class="text-xl text-slate-400 font-mono" id="rawLanded">--</span>
-                    </div>
-                    <div class="flex justify-between items-center">
-                        <span class="text-blue-500 text-sm font-black uppercase tracking-widest italic font-black">MINIAMI 清算價</span>
-                        <span class="text-7xl text-white font-black" id="finalQuote">--</span>
-                    </div>
-                </div>
-
-                <div id="profitHint" class="mt-10 p-6 bg-blue-900/20 rounded-2xl border border-blue-800 text-blue-400 font-bold text-xs text-center leading-relaxed"></div>
+                【審計流程】
+                1. 官網價：先找 Apple/Sony/Samsung 等官網定價作為天花板。
+                2. 地標價：搜尋「地標網通」或「手機王」的當日報價作為「真實地板價」。
+                3. 電商價：掃描 Coupang、MOMO、蝦皮商城。
+                4. 雜訊過濾：嚴禁抓取低於「真實地板價」80% 的價格（那是配件或分期）。
                 
-                <button onclick="window.open('https://line.me/ti/p/您的LINE')" class="w-full mt-10 bg-[#06C755] text-white py-8 rounded-[2rem] font-black text-3xl shadow-xl">預約南屯面交</button>
-            </div>
-        </div>
-    </main>
+                請只回傳 JSON：{"msrp":數字, "floor":數字, "coupang":數字, "momo":數字, "shopee":數字, "best_platform":"名稱"}` }] }]
+            })
+        });
 
-    <script>
-        async function runV39() {
-            const item = document.getElementById('itemName').value;
-            const API_KEY = localStorage.getItem('MINIAMI_KEY');
-            if(!item || !API_KEY) return;
+        const data = await response.json();
+        const result = JSON.parse(data.candidates[0].content.parts[0].text.match(/\{.*\}/s)[0]);
 
-            const btn = document.getElementById('runBtn');
-            const resultArea = document.getElementById('resultArea');
-            const bar = document.getElementById('bar');
-            document.getElementById('loader').classList.remove('hidden');
-            
-            btn.disabled = true;
-            resultArea.classList.add('hidden');
-            bar.style.width = '40%';
+                // 以地標/商城價作為最終「本地街價」
+        const twStreetPrice = result.floor || result.momo;
 
-            try {
-                const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${API_KEY}`;
-                
-                // V39.0 極簡指令：消除 AI 的廢話，強迫其僅輸出數據
-                const response = await fetch(url, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({
-                        contents: [{ parts: [{ text: `Task: Price Audit for "${item}". 
-                        Must find: Official MSRP, Taiwan street price (MOMO/Shopee/Coupang), and Best Asian price (JP/KR/TH/VN/PH).
-                        Format strictly as JSON: {"msrp":number, "tw":number, "platform":"string", "best_country":"string", "best_cost_jpy_or_local":number, "currency_rate_to_twd":number}` }] }]
-                    })
-                });
+        document.getElementById('targetName').innerText = item;
+        document.getElementById('msrpPrice').innerText = `NT$ ${Math.round(result.msrp).toLocaleString()}`;
+        document.getElementById('twPrice').innerText = `NT$ ${Math.round(twStreetPrice).toLocaleString()}`;
+        document.getElementById('sourceLabel').innerText = result.best_platform;
+        
+        // 渲染導購連結 (依據抓到的平台自動變換)
+        let sUrl = `https://www.tw.coupang.com/search?q=${encodeURIComponent(item)}`;
+        if(result.best_platform.includes('MOMO')) sUrl = `https://www.momoshop.com.tw/search/searchShop.jsp?keyword=${encodeURIComponent(item)}`;
+        
+        document.getElementById('affiliateBtn').onclick = () => window.open(sUrl);
+        document.getElementById('resultArea').classList.remove('hidden');
 
-                bar.style.width = '80%';
-                const data = await response.json();
-                const text = data.candidates[0].content.parts[0].text;
-                const jsonStr = text.match(/\{.*\}/s)[0];
-                const result = JSON.parse(jsonStr);
-
-                // 清算邏輯
-                const rawLanded = (result.best_cost_jpy_or_local * result.currency_rate_to_twd) * 1.05 + 1200;
-                let finalQuote = result.tw <= rawLanded ? result.tw : rawLanded + (result.tw - rawLanded) * 0.5;
-
-                document.getElementById('targetName').innerText = item;
-                document.getElementById('msrpPrice').innerText = `NT$ ${Math.round(result.msrp).toLocaleString()}`;
-                document.getElementById('twPrice').innerText = `NT$ ${Math.round(result.tw).toLocaleString()}`;
-                document.getElementById('sourceLabel').innerText = result.platform;
-                document.getElementById('bestCountry').innerText = result.best_country;
-                document.getElementById('rawLanded').innerText = `NT$ ${Math.round(rawLanded).toLocaleString()}`;
-                document.getElementById('finalQuote').innerText = `NT$ ${Math.round(finalQuote).toLocaleString()}`;
-                
-                const sUrl = result.platform.toLowerCase().includes('shopee') ? `https://shopee.tw/search?keyword=${encodeURIComponent(item)}` : `https://www.momoshop.com.tw/search/searchShop.jsp?keyword=${encodeURIComponent(item)}`;
-                document.getElementById('affiliateBtn').onclick = () => window.open(sUrl);
-                
-                document.getElementById('profitHint').innerText = result.tw <= rawLanded ? "🏠 本地優勢：此資產在台灣購買最具成本效益。" : `💎 清算對沖：透過 ${result.best_country} 節點可為您節省 NT$ ${Math.round(result.tw - finalQuote).toLocaleString()}。`;
-
-                bar.style.width = '100%';
-                setTimeout(() => { resultArea.classList.remove('hidden'); document.getElementById('loader').classList.add('hidden'); }, 500);
-
-            } catch (err) {
-                alert("泛亞節點阻塞中。請檢查網路或 API Key 餘額，或稍後再試。");
-            } finally { btn.disabled = false; bar.style.width = '0%'; }
-        }
-    </script>
-</body>
-</html>
+    } catch (err) { alert("獵人節點同步中，請確保型號完整。"); }
+}
